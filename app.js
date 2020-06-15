@@ -7,6 +7,9 @@ const rateLimit = require('express-rate-limit')
 const hpp = require('hpp')
 const morgan = require('morgan');
 
+const postRouter = require('./routes/postRoutes');
+const userRouter = require('./routes/userRoutes');
+
 
 
 const app = express();
@@ -35,7 +38,10 @@ const limiter = rateLimit({
     windowMs: 60*60*1000, 
     message: 'Too many requests from this IP, try again next hour'
 })
-app.use('/api', limiter);
+app.use('/', limiter);
+
+app.use('/social/posts', postRouter);
+app.use('/social/users', userRouter);
 
 module.exports = app;
 
