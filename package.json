@@ -27,8 +27,9 @@
     "hpp": "^0.2.3",
     "mongoose": "^5.9.18",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.4",
     "ndb": "^1.1.5",
+    "nodemon": "^2.0.4",
+    "validator": "^13.1.1",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
