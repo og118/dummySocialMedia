@@ -1,51 +1,69 @@
 const mongoose = require('mongoose');
-const Post = require('./../models/postModel')
+const Post = require('./../models/postModel');
+const APIFeatures = require('./../utils/APIFeatures');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('../utils/appError');
 
-exports.getPosts = async (req, res, next) => {
-    const posts = await Post.find({});
+exports.getPosts = catchAsync(async (req, res, next) => {
+    const features = new APIFeatures(Post.find(), req.query).sort().limitFields();
+    const posts = await features.query;
     res.status(404).json({
         status: "success",
         data: posts
     });
-}
+});
 
-exports.getPost = async (req, res, next) => {
+exports.getPost = catchAsync(async (req, res, next) => {
     const userId = req.params.id;
 
-    const post = await Post.findById(userId)
+    const post = await Post.findById(userId);
+    if(!post) {
+        return next(new AppError('Post not found', 404))
+    }
+
     res.status(404).json({
         status: "success",
         data: post
     });
-}
+});
 
-exports.createPost = async (req, res, next) => {
+exports.createPost = catchAsync(async (req, res, next) => {
     const post = await Post.create(req.body)
     res.status(404).json({
         status: "success",
         data: post
     })
-}
+});
 
-exports.updatePost = async (req, res, next) => {
+exports.updatePost = catchAsync( async (req, res, next) => {
     const userId = req.params.id;
 
     const post = await Post.findByIdAndUpdate(userId, req.body, {
         new: true,
         runValidators: true
-    })
+    });
+    
+    if(!post) {
+        return next(new AppError('Post not found', 404))
+    }
+
     res.status(404).json({
         status: "success",
         data: post
     });
-}
+})
 
-exports.deletePost = async (req, res, next) => {
+exports.deletePost = catchAsync(async (req, res, next) => {
     const userId = req.params.id;
 
     const post = await Post.findByIdAndDelete(userId)
+    
+    if(!post) {
+        return next(new AppError('Post not found', 404))
+    }
+    
     res.status(204).json({
         status: "success",
         data: null
     });
-}
+});

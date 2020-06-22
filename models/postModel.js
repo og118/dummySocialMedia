@@ -13,6 +13,10 @@ const postSchema = new mongoose.Schema({
     downVotes : {
         type: Number,
         default: 0
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now()
     }
 });
 

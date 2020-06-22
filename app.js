@@ -6,6 +6,7 @@ const xssClean = require('xss-clean')
 const rateLimit = require('express-rate-limit')
 const hpp = require('hpp')
 const morgan = require('morgan');
+const globalErrorHandler = require('./controllers/errorController.js')
 
 const postRouter = require('./routes/postRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -42,6 +43,9 @@ app.use('/', limiter);
 
 app.use('/social/posts', postRouter);
 app.use('/social/users', userRouter);
+
+app.use(globalErrorHandler);
+
 
 module.exports = app;
 

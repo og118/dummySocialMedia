@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "debug": "ndb server.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "mongoose": "^5.9.18",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.4",
+    "ndb": "^1.1.5",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
