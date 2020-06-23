@@ -17,8 +17,23 @@ const postSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now()
+    },
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: [true, 'A post must belong to a user']
     }
 });
+
+
+
+postSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'user',
+        select: 'username _id'
+    })
+    next();
+})
 
 const Post = mongoose.model('Post', postSchema)
 
