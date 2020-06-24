@@ -176,3 +176,27 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 });
 
+exports.updatePassword =catchAsync(async (req, res, next) => {
+    if(!req.user){
+        return next(new AppError('You are not logged in!',403));
+    }
+
+    // 1) get user
+    const user = await User.findOne(req.user).select('+password');
+    
+    // 2) check if posted password is correct
+    const password = req.body.currentPassword;
+    if(!user ||!(await user.correctPassword(password, user.password))) {
+       return next(new AppError('WRONG PASSWORD! Please enter the correct password to proceed', 401));
+    } else if(req.body.currentPassword === req.body.updatedPassword) {
+        return next(new AppError('Your New Password cannot be the same as the older one', 401));
+    }     
+
+    // 3) yes? update password
+    user.password = req.body.updatedPassword;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save({validateBeforeSave: true})
+    
+    // 4) send jwt
+    createSendToken(user, 200, res);
+})
