@@ -7,10 +7,16 @@ const AppError = require('../utils/appError');
 exports.verifyUser = catchAsync(async (req, res, next) => {
     const postId = req.params.id;
     const post = await Post.findById(postId);
-    if(post.user._id != req.user.id || req.user.role!='admin') {
-        return next(new AppError('You are not allowed to update/delete someone else\'s post', 403))
+    if(req.user.role == 'admin') {
+        next();
     }
+    else {
+        if(post.user.id != req.user.id) {
+            return next(new AppError('You are not allowed to update/delete someone else\'s post', 403))
+        }
     next();
+    }
+
 })
 
 exports.getPosts = catchAsync(async (req, res, next) => {

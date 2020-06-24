@@ -25,6 +25,11 @@ const postSchema = new mongoose.Schema({
     }
 });
 
+// prevent showing posts of deleted users 
+postSchema.pre(/^find/, function(next) {
+    this.find({user: {$ne: null}});
+    next();
+})
 
 
 postSchema.pre(/^find/, function(next) {

@@ -11,7 +11,7 @@ router
 router
     .route('/:id')
     .get(postController.getPost)
-    .patch(authController.protect, authController.restrictTo('user'), postController.verifyUser, postController.updatePost)
+    .patch(authController.protect, authController.restrictTo('user','moderator'), postController.verifyUser, postController.updatePost)
     .delete(authController.protect, postController.verifyUser, postController.deletePost);
 
 
