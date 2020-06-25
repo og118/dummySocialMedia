@@ -7,6 +7,10 @@ const AppError = require('../utils/appError');
 exports.verifyUser = catchAsync(async (req, res, next) => {
     const postId = req.params.id;
     const post = await Post.findById(postId);
+    if(!post) {
+        return next(new AppError('Post not found', 404))
+    }
+
     if(req.user.role == 'admin') {
         next();
     }
@@ -19,11 +23,15 @@ exports.verifyUser = catchAsync(async (req, res, next) => {
 
 })
 
+const hideObj = {show: { $ne : false}};
+
 exports.getPosts = catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Post.find(), req.query).sort().limitFields();
+    
+    const features = new APIFeatures(Post.find(hideObj), req.query).sort().limitFields();
     const posts = await features.query;
     res.status(404).json({
         status: "success",
+        dataCount: posts.length,
         data: posts
     });
 });
@@ -35,12 +43,19 @@ exports.getPost = catchAsync(async (req, res, next) => {
     if(!post) {
         return next(new AppError('Post not found', 404))
     }
+    if(post.show) {
+        res.status(404).json({
+            status: "success",
+            data: post
+        })
+    }
+    else {
+        return next(new AppError('Post has been removed', 404))
+    }
 
-    res.status(404).json({
-        status: "success",
-        data: post
-    });
+    
 });
+
 
 exports.createPost = catchAsync(async (req, res, next) => {
     if(!req.body.user) req.body.user = req.user.id
@@ -63,9 +78,7 @@ exports.updatePost = catchAsync( async (req, res, next) => {
         runValidators: true
     });
     
-    if(!post) {
-        return next(new AppError('Post not found', 404))
-    }
+    
 
     res.status(404).json({
         status: "success",
@@ -76,14 +89,52 @@ exports.updatePost = catchAsync( async (req, res, next) => {
 exports.deletePost = catchAsync(async (req, res, next) => {
     const postId = req.params.id;
 
-    const post = await Post.findByIdAndDelete(postId)
-    
-    if(!post) {
-        return next(new AppError('Post not found', 404))
-    }
-    
+    const post = await Post.findByIdAndDelete(postId)    
+
     res.status(204).json({
         status: "success",
         data: null
     });
 });
+
+// exports.hidePosts = catchAsync(async (req, res, next) => {
+//     const posts = await Post.find({user: })
+//     console.log(posts);
+//     res.status(204).json({
+//         status: "success",
+//         data: null
+//     });
+// });
+
+exports.hideUserPosts = catchAsync(async (req, res, next) => {
+    const posts = await Post.find({user: req.params.id || req.userId})
+
+    posts.forEach(async el => {
+        if(req.body.blacklisted != undefined) {
+            el.show = !req.body.blacklisted
+        }
+        else el.show = false
+        
+        await el.save();
+    })
+
+    
+    next();
+})
+
+exports.blackListPost = catchAsync(async (req, res, next) => {
+    const post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
+        new: true
+    })
+    if(!post) {
+        return next(new AppError('Post not found', 404))
+    }
+    
+    post.show = !post.blacklisted
+    await post.save()
+    
+    res.status(200).json({
+        status: "success",
+        data: post
+    })
+})

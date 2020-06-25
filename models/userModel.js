@@ -62,16 +62,30 @@ const userSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: true,
-        select: false
     },
     passwordResetToken: String,
-    passwordResetExpire: Date
+    passwordResetExpire: Date,
+    blacklisted: {
+        type: Boolean,
+        default: false
+    }
+
+},{
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
 });
 
-userSchema.pre(/^find/, function(next) {
-    this.find({active: {$ne: false}});
-    next();
+// userSchema.pre(/^find/, function(next) {
+//     this.find({active: {$ne: false}});
+//     next();
+// })
+
+userSchema.virtual('posts', {
+    ref: 'Post',
+    foreignField: 'user',
+    localField:'_id',
 })
+
 
 
 

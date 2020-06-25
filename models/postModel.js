@@ -5,12 +5,12 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Post must have content']
     },
-    upVotes : {
+    upVoteCount : {
         type: Number,
         default: 0
         // embed the users who upvoted and same in downvotes
     },
-    downVotes : {
+    downVoteCount : {
         type: Number,
         default: 0
     },
@@ -22,23 +22,31 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: [true, 'A post must belong to a user']
+    },
+    show: {
+        type: Boolean,
+        default: true
+    },
+    blacklisted: {
+        type: Boolean,
+        default: false
     }
 });
 
-// prevent showing posts of deleted users 
-postSchema.pre(/^find/, function(next) {
-    this.find({user: {$ne: null}});
-    next();
-})
-
+// postSchema.pre(/^find/, function(next) {
+//     this.find({show: {$ne: false}});
+//     next();
+// })
 
 postSchema.pre(/^find/, function(next) {
     this.populate({
         path: 'user',
-        select: 'username _id'
+        select: 'username'
     })
     next();
 })
+
+
 
 const Post = mongoose.model('Post', postSchema)
 

@@ -47,13 +47,13 @@ exports.login = catchAsync( async (req, res, next) => {
     // 2) check if username exists and password is correct, YES? send token : send err
     if(email) {
          user = await User.findOne({email: email}).select('+password');
-        if(!user || !(await user.correctPassword(password, user.password))) {
+        if(!user || !user.active || !(await user.correctPassword(password, user.password))) {
             return next(new AppError('Incorrect email or password'))
         }
     }
     else if (username) {
         user = await User.findOne({username: username}).select('+password');
-        if(!user || !(await user.correctPassword(password, user.password))) {
+        if(!user || !user.active || !(await user.correctPassword(password, user.password))) {
             return next(new AppError('Incorrect username or password'))
         }
     }
@@ -78,8 +78,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
     // 3) check if the user is not deleted
     const currentUser = await User.findById(decoded.id)
-    if(!currentUser) {
-        return next(new AppError('The user belonging to the token no longer exists'))
+    if(!currentUser || !currentUser.active) {
+        return next(new AppError('The user belonging to the token no longer exists', 404))
     }
 
     // 4) check if password was changed after token was issued
@@ -87,8 +87,13 @@ exports.protect = catchAsync(async (req, res, next) => {
         return next(new AppError('User Password changed recently', 401))
     }
 
+    if(currentUser.blacklisted) {
+        return next(new AppError('Your account is blacklisted, you cannot access this feature', 401))
+    }
+
     // 5) grant access
     req.user = currentUser;
+    req.userId = currentUser.id
     next();
 })
 
@@ -105,7 +110,7 @@ exports.restrictTo = (...roles) => {
 exports.forgotPassword = catchAsync(async(req, res, next) => {
     // 1) get user email
     const user = await User.findOne({email: req.body.email});
-    if(!user) {
+    if(!user || !user.active) {
         return next(new AppError('No user with such email exists', 404));
     }
     // 2) create token
@@ -161,8 +166,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
    
     // 2) if token not expired and user exists, set new password
-    if (!user) {
-        return next(new AppError('Token is invalid or expired',400));
+    if (!user || !user.active) {
+        return next(new AppError('Token is invalid or expired', 400));
     }
     user.passwordConfirm = req.body.passwordConfirm;
     user.password = req.body.password;
@@ -182,11 +187,11 @@ exports.updatePassword =catchAsync(async (req, res, next) => {
     }
 
     // 1) get user
-    const user = await User.findOne(req.user).select('+password');
+    const user = await User.findById(req.userId).select('+password');
     
     // 2) check if posted password is correct
     const password = req.body.currentPassword;
-    if(!user ||!(await user.correctPassword(password, user.password))) {
+    if(!user  ||!(await user.correctPassword(password, user.password))) {
        return next(new AppError('WRONG PASSWORD! Please enter the correct password to proceed', 401));
     } else if(req.body.currentPassword === req.body.updatedPassword) {
         return next(new AppError('Your New Password cannot be the same as the older one', 401));

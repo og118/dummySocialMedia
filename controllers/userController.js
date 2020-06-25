@@ -2,10 +2,15 @@ const User = require('./../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('./../utils/AppError');
 const { expectCt } = require('helmet');
+const Post = require('../models/postModel');
+const sendEmail = require('./../utils/email')
+
+const hideObj = {active: { $ne : false}, blacklisted: {$ne : true}};
 
 exports.getUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find({});
+    const users = await User.find(hideObj);
     res.status(200).json({
+        dataCount: users.length,
         status: 'success',
         data: users
     })
@@ -13,16 +18,23 @@ exports.getUsers = catchAsync(async (req, res, next) => {
 
 exports.getUser = catchAsync(async (req, res, next) => {
     const userId = req.params.id;
-
-    const user = await User.findById(userId);
-    if(!user) {
+    let user =  await User.findById(userId);
+    if(!user || !user.active) {
         return next(new AppError('User not found', 404))
     }
-
-    res.status(404).json({
-        status: "success",
-        data: user
-    });
+    if(user.active != false) {
+        if(user.blacklisted != true) {
+             user = await User.findById(userId).populate({path: 'posts', options: {select: {content: 1}}});
+        }
+        res.status(200).json({
+            status: "success",
+            data: user
+        });
+    }
+    else {
+        return next(new AppError('User not found', 404));
+    }
+     
 });
 
 exports.createUser = catchAsync(async (req, res, next) => {
@@ -101,9 +113,43 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
     await User.findByIdAndUpdate(req.user.id, {active: false})
-
+    
     res.status(204).json({
         status: 'success',
         data: null
     })
+    
+})
+
+exports.blacklist = catchAsync(async(req, res, next) => {
+    const user = await User.findById(req.params.id)
+    user.blacklisted = req.body.blacklisted;
+    const message = `The Administrator has blacklisted your account! All your posts are deleted, you are now restricted to create, update or delete posts.` 
+
+    await user.save();
+    if(user.blacklisted) {
+        try{
+            const message = `The Administrator has blacklisted your account! All your posts are deleted, you are now restricted to create, update or delete posts.` 
+            await sendEmail({
+                email: user.email,
+                subject: 'Your mySocial Account Blacklisted',
+                message
+            })
+            res.status(200).json({
+                status: 'success',
+                message: 'email sent to user',
+                data: user
+            })
+        } catch {
+            return next( new AppError('Error sending the mail, please try later', 500))
+        }
+    }
+    else {
+        res.status(200).json({
+            status: 'success',
+            data: user
+        })
+    }
+    
+    
 })
