@@ -126,9 +126,10 @@ exports.blackListPost = catchAsync(async (req, res, next) => {
     const post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
         new: true
     })
-    if(!post) {
+    if(!post ) {
         return next(new AppError('Post not found', 404))
     }
+    
     
     post.show = !post.blacklisted
     await post.save()
@@ -166,6 +167,9 @@ const removeDownvote = (post, userId) => {
 exports.upvotePost = catchAsync(async (req, res, next) => {
     
     let post = await Post.findById(req.params.postId);
+    if(!post || post.show ) {
+        return next(new AppError('Post not found', 404))
+    }
     let item;
     post.upvotes.forEach(el => {
         if(el.id == req.userId) {
@@ -196,6 +200,9 @@ exports.upvotePost = catchAsync(async (req, res, next) => {
 exports.downvotePost = catchAsync(async (req, res, next) => {
     
     let post = await Post.findById(req.params.postId);
+    if(!post || !post.show ) {
+        return next(new AppError('Post not found', 404))
+    }
     let item;
     post.downvotes.forEach(el => {
         if(el.id == req.userId) {
