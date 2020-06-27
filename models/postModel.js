@@ -30,7 +30,15 @@ const postSchema = new mongoose.Schema({
     blacklisted: {
         type: Boolean,
         default: false
-    }
+    },
+    upvotes: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
+    downvotes: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }]
 });
 
 // postSchema.pre(/^find/, function(next) {
@@ -41,6 +49,12 @@ const postSchema = new mongoose.Schema({
 postSchema.pre(/^find/, function(next) {
     this.populate({
         path: 'user',
+        select: 'username'
+    }).populate({
+        path: 'upvotes',
+        select: 'username'
+    }).populate({
+        path: 'downvotes',
         select: 'username'
     })
     next();

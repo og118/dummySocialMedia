@@ -16,4 +16,8 @@ router
 
 router.patch('/blacklist/:postId', authController.protect, authController.restrictTo('admin'), postController.blackListPost)
 
+router.get('/:postId/upvote', authController.protect, postController.upvotePost)
+router.get('/:postId/downvote', authController.protect, postController.downvotePost)
+
+
 module.exports = router;

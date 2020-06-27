@@ -138,3 +138,87 @@ exports.blackListPost = catchAsync(async (req, res, next) => {
         data: post
     })
 })
+
+const addUpvote = (post, userId) => {
+    post.upvotes.push(userId),
+    post.upVoteCount = post.upVoteCount+1;
+    return post
+}
+
+const addDownvote = (post, userId) => {
+    post.downvotes.push(userId),
+    post.downVoteCount = post.downVoteCount+1;
+    return post
+}
+
+const removeUpvote = (post, userId) => {
+    post.upvotes = post.upvotes.filter(function(value) {return value != userId})
+    post.upVoteCount = post.upVoteCount-1;
+    return post
+}
+
+const removeDownvote = (post, userId) => {
+    post.downvotes = post.downvotes.filter(function(value) {return value != userId})
+    post.downVoteCount = post.downVoteCount-1;
+    return post
+}
+
+exports.upvotePost = catchAsync(async (req, res, next) => {
+    
+    let post = await Post.findById(req.params.postId);
+    let item;
+    post.upvotes.forEach(el => {
+        if(el.id == req.userId) {
+            item = el;    
+        }
+    })  
+    
+    if(item){
+        post = removeUpvote(post, item);
+    }
+    else {
+        post.downvotes.forEach(el => {
+            if(el.id == req.userId) {
+               post = removeDownvote(post, el)
+            }
+        })
+        post = addUpvote(post, req.userId)   
+    }
+    await post.save()
+    res.status(200).json({
+        status: "success",
+        data: post
+    })
+
+   
+})
+
+exports.downvotePost = catchAsync(async (req, res, next) => {
+    
+    let post = await Post.findById(req.params.postId);
+    let item;
+    post.downvotes.forEach(el => {
+        if(el.id == req.userId) {
+            item = el;    
+        }
+    })  
+    
+    if(item){
+        post = removeDownvote(post, item);
+    }
+    else {
+        post.upvotes.forEach(el => {
+            if(el.id == req.userId) {
+               post = removeUpvote(post, el)
+            }
+        })
+        post = addDownvote(post, req.userId)   
+    }
+    await post.save()
+    res.status(200).json({
+        status: "success",
+        data: post
+    })
+})
+
+
