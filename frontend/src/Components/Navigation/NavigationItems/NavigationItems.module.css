@@ -1,0 +1,11 @@
+.NavigationItems {
+  padding-top: 30px;
+  display: block;
+  float: right;
+}
+
+@media(max-width : 600px) {
+  .NavigationItems {
+   display: none;
+ }
+}
