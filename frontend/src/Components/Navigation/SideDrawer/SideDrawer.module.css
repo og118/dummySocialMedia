@@ -4,8 +4,11 @@
     text-align: center;
     z-index: 200;
     color: black;
-    height: 124.8px;
+    height: 118.4px;
     display: none;
+    -webkit-box-shadow: 0px 6px 9px -1px rgba(0,0,0,0.68);
+    -moz-box-shadow: 0px 6px 9px -1px rgba(0,0,0,0.68);
+    box-shadow: 0px 6px 9px -1px rgba(0,0,0,0.68);
 }
 
 .Show{

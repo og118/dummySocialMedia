@@ -7,6 +7,7 @@
 
 @media(max-width : 600px) {
   .NavigationItems {
+    margin-top: 5px;
    text-align: center;
    flex-flow: column;
    float: left;
