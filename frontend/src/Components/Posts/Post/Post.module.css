@@ -1,0 +1,27 @@
+.Post{
+    background-color: white;
+    -webkit-box-shadow: 14px 14px 5px -8px rgba(0,0,0,0.21);
+    -moz-box-shadow: 14px 14px 5px -8px rgba(0,0,0,0.21);
+    box-shadow: 14px 14px 5px -8px rgba(0,0,0,0.21);
+    width: 80%;
+    height: 80px;
+    margin: auto;
+    margin-top: 10px;
+    font-family: 'Ubuntu';
+    padding: 20px;
+}
+
+.Post .Title {
+    font-weight: 900;
+    font-family: 'Ubuntu';
+    font-size: 25px;
+}
+
+.Post .Time {
+    font-size: smaller;
+}
+
+.Post .Content {
+    margin-top: 5px;
+    font-weight: 700;
+}

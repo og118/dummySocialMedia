@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import Toolbar from './../Navigation/Toolbar/Toolbar'
 import Aux from '../../hoc/Auxilliary';
 import SideDrawer from './../Navigation/SideDrawer/SideDrawer'
+import Posts from './../Posts/Posts'
 
 
 class Layout extends Component {
@@ -19,6 +20,7 @@ class Layout extends Component {
         <Aux>
           <Toolbar toggleSideBar={this.toggleSideBar}/>    
           <SideDrawer open={this.state.showSideDrawer}/>
+          <Posts />
         </Aux>
       );
     }

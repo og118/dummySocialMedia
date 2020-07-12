@@ -29,7 +29,7 @@ exports.getPosts = catchAsync(async (req, res, next) => {
     
     const features = new APIFeatures(Post.find(hideObj), req.query).sort().limitFields();
     const posts = await features.query;
-    res.status(404).json({
+    res.status(200).json({
         status: "success",
         dataCount: posts.length,
         data: posts

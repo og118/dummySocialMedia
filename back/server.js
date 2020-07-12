@@ -19,8 +19,8 @@ mongoose.connect(DB, {
     useUnifiedTopology: true //imp to fix deprecation warning
 }).then(console.log('DB connection successful'));
 
-const server = app.listen(3000, () =>{
-    console.log('App running on port 3000');
+const server = app.listen(9000, () =>{
+    console.log('App running on port 9000');
 }); 
 
 
