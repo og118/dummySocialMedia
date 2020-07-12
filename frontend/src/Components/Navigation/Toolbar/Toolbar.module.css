@@ -1,7 +1,8 @@
 .Toolbar {
     background-color: black;
     color: white;
-    height: 80px;
+    height: 83px;
+    z-index: 250;
 }
 
 .Title {
@@ -15,7 +16,10 @@
 
 @media(max-width: 600px) {
     .Title {
-        font-size: 40px;
-        margin-top: 10px;
+        font-size: 42px;
+        margin-top: 5px;
+    }
+    .DesktopOnly {
+        display: none;
     }
 }

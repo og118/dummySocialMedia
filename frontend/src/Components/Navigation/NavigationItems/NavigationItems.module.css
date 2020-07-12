@@ -1,11 +1,15 @@
 .NavigationItems {
   padding-top: 30px;
-  display: block;
+  display: flex;
+  flex-flow: row;
   float: right;
 }
 
 @media(max-width : 600px) {
   .NavigationItems {
-   display: none;
+   text-align: center;
+   flex-flow: column;
+   float: left;
+   width: 100%;
  }
 }
