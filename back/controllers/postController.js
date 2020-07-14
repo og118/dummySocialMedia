@@ -61,6 +61,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
     if(!req.body.user) req.body.user = req.user.id
     const post = await Post.create({
         content: req.body.content,
+        title: req.body.title,
         user: req.body.user
     })
     res.status(404).json({

@@ -20,6 +20,7 @@ class Layout extends Component {
         <Aux>
           <Toolbar toggleSideBar={this.toggleSideBar}/>    
           <SideDrawer open={this.state.showSideDrawer}/>
+
           <Posts />
         </Aux>
       );

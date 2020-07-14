@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit')
 const hpp = require('hpp')
 const morgan = require('morgan');
 const globalErrorHandler = require('./controllers/errorController.js')
+const cors = require('cors');
 
 const postRouter = require('./routes/postRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -14,9 +15,14 @@ const userRouter = require('./routes/userRoutes');
 
 
 const app = express();
+
+app.use(cors());
+app.options('*', cors());
+
 // MIDDLEWARES 
 // Security HTTP headers
 app.use(helmet());
+
 
 // Development Logging
 if(process.env.NODE_ENV === 'development') app.use(morgan('dev'));

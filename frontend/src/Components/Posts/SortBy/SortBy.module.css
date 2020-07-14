@@ -1,0 +1,16 @@
+.SortBy {
+    font-family: 'Ubuntu'; 
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    margin-bottom: -10px;
+    margin-left: 50px;
+}
+
+.Options {
+    margin-top: 20px ;
+    margin-left: 5px;
+}
+
+
+
