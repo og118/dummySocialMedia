@@ -1,16 +1,20 @@
 .SortBy {
     font-family: 'Ubuntu'; 
-    width: 100%;
-    display: flex;
-    flex-flow: row;
-    margin-bottom: -10px;
-    margin-left: 50px;
+    width: 80%;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 28px;
 }
 
-.Options {
-    margin-top: 20px ;
-    margin-left: 5px;
+
+
+form {
+    vertical-align: bottom;
+    padding-top: 7.8px;
 }
+
+
 
 
 

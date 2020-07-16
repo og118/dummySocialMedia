@@ -5,10 +5,8 @@ const sortBy = (props) => {
     return( 
         <div className={classes.SortBy}>
             <span>
-                <h4>Sort by :</h4>
-            </span>
-            <span>
                 <form className={classes.Options}>
+                    <label><b>Sort by : </b></label>
                     <select onChange={props.optionChange}>
                         <option selected value="-createdAt">Time (newest first)</option>
                         <option value="createdAt">Time (oldest first)</option>

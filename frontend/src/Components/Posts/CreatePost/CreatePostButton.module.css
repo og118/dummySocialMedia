@@ -1,0 +1,26 @@
+
+.Button {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    float: right;
+    width: 150px;
+}
+
+.Div {
+    width: 80%;
+    margin: auto
+}
+
+@media (max-width: 600px){
+    .Button {
+       
+        width: 100px;
+    }
+}
+
+
+
+
+

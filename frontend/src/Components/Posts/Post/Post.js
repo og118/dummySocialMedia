@@ -6,13 +6,24 @@ import ToggleFullPost from './ToggleFullPost/ToggleFullPost'
 
 class Post extends Component {
     state = {
-        showFull: false,
         upvotes: this.props.upvoteCount,
         downvotes: this.props.downvoteCount,
+        showFull: false,
         up: null,
-        down: null
+        down: null,
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(this.props !== nextProps) {
+          this.setState({
+            upvotes: nextProps.upvoteCount,
+            up: false,
+            downvotes: nextProps.downvoteCount,
+            down: false
+          });
+        }
+      }
+    
     upHandler = () => {
         console.log('upclick')    
         this.setState((prevState) => {
@@ -28,11 +39,12 @@ class Post extends Component {
             }
             
             return {down: false, up: !prevState.up, upvotes: upvotes, downvotes: downvotes}
+            // upvote request goes here
         })
     }
 
     downHandler = () => {
-        console.log('downclick')
+        console.log('downclick', this.state.downvotes)
         this.setState((prevState) => {
             let upvotes = prevState.upvotes , downvotes = prevState.downvotes;
             if(prevState.up){
@@ -47,7 +59,12 @@ class Post extends Component {
             
             return {up: false, down: !prevState.down, upvotes: upvotes, downvotes: downvotes}
         })
+        
     }
+
+
+
+    
 
     togglePostHandler = () => {
         this.setState((prevState) => {
@@ -89,12 +106,6 @@ class Post extends Component {
         return createdAt;
     }
 
-
-
-    componentDidUpdate() {
-        console.log('post')
-    }
-
     render() {
         let origin = Date.parse(new Date(this.props.date));
         let now = Date.now();
@@ -113,12 +124,12 @@ class Post extends Component {
                 <span className={classes.Votes}>
                     <hr></hr>
                     <Votes 
-                        upvotes={this.props.upvoteCount} 
-                        downvotes={this.props.downvoteCount}
-                        upHandler={this.upHandler}
+                        upvotes={this.state.upvotes} 
+                        downvotes={this.state.downvotes}
                         up={this.state.up}
-                        downHandler={this.downHandler}
                         down={this.state.down}
+                        upHandler={this.upHandler}
+                        downHandler={this.downHandler}
                     />
                 </span>
 

@@ -1,19 +1,27 @@
 import React, {Component} from 'react'
 import Post from './Post/Post'
 import Axios from 'axios'
-import Spinner from '../UI/Spinner';
+import Spinner from '../UI/Spinner/Spinner';
 import SortBy from './SortBy/SortBy'
+import CreatePostButton from './CreatePost/CreatePostButton'
 
 class Posts extends Component {
     state = {
         posts: null,
-        postUpdated: true,
+        loading: true,
         sortby: '-createdAt'
     }
+
+    
 
 
     componentDidUpdate(prevProps, prevState) {
         console.log('update')
+        if(prevState.sortby !== this.state.sortby) {
+            this.setState({
+                loading: true
+            })
+        }
         Axios({
             method: "GET",
             url: `http://localhost:9000/social/posts?sort=${this.state.sortby}`,
@@ -25,7 +33,7 @@ class Posts extends Component {
               if(prevState.sortby !== this.state.sortby) {
                   this.setState({
                       posts: res.data.data,
-                      postUpdated: true
+                      loading: false
                   })
               }
             
@@ -43,7 +51,7 @@ class Posts extends Component {
             "Content-Type": "application/json"
           }
         }).then(res => {
-          this.setState({posts: res.data.data})
+          this.setState({posts: res.data.data, loading: false})
         }).catch(err => {
             console.log(err);
         });
@@ -70,7 +78,7 @@ class Posts extends Component {
     render() {
         let posts = <Spinner />
 
-        if(this.state.posts) {
+        if(!this.state.loading) {
             console.log(this.state.posts)
             posts = this.state.posts.map(el =>{
                 return(<Post 
@@ -89,6 +97,7 @@ class Posts extends Component {
 
         return(
             <div>
+                <CreatePostButton clicked={this.showCreateScreenHandler} /> 
                 <SortBy optionChange={this.optionChangeHandler}/>
                 {
                   posts  
