@@ -1,0 +1,23 @@
+.SortBy {
+    font-family: 'Ubuntu'; 
+    width: 80%;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 28px;
+}
+
+
+
+form {
+    vertical-align: bottom;
+    padding-top: 7.8px;
+}
+
+select {
+    border-radius: 3px;
+}
+
+
+
+

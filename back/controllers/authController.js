@@ -9,11 +9,23 @@ const sendEmail = require('../utils/email');
 
 createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id)
+    const cookieOptions = {
+        expires: new Date(Date.now()+ process.env.JWT_COOKIE_EXPIRES_IN*24*60*60*1000),
+        httpOnly : true
+    }
+
+    user.password= undefined
+    
+    // if(process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+    res.cookie('jwt', token, cookieOptions)
+ 
+
     res.status(statusCode).json({
         status: 'success',
         token,
         data: user
     });
+    
 }
 
 const signToken = (id) => {
@@ -48,13 +60,13 @@ exports.login = catchAsync( async (req, res, next) => {
     if(email) {
          user = await User.findOne({email: email}).select('+password');
         if(!user || !user.active || !(await user.correctPassword(password, user.password))) {
-            return next(new AppError('Incorrect email or password'))
+            return next(new AppError('Incorrect email or password', 403))
         }
     }
     else if (username) {
         user = await User.findOne({username: username}).select('+password');
         if(!user || !user.active || !(await user.correctPassword(password, user.password))) {
-            return next(new AppError('Incorrect username or password'))
+            return next(new AppError('Incorrect username or password', 403))
         }
     }
     
@@ -108,6 +120,9 @@ exports.restrictTo = (...roles) => {
 }
 
 exports.forgotPassword = catchAsync(async(req, res, next) => {
+    if(!req.body.email) {
+        return next(new AppError('Please provide an email', 400))
+    }
     // 1) get user email
     const user = await User.findOne({email: req.body.email});
     if(!user || !user.active) {
@@ -130,33 +145,15 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
             status: 'success',
             message: 'reset token sent to email'
         })
-    } catch {
+    } catch (err){
         user.passwordResetToken = undefined,
         user.passwordResetExpire = undefined,
         await user.save({validateBeforeSave: false});
-        
+        console.log(err)
         return next( new AppError('Error sending the mail, please try later', 500))
     }
 })
 
-exports.resetPassword = catchAsync(async (req, res, next) => {
-    // 1) get user from token
-    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest("hex")
-     user = await User.findOne({passwordResetToken: hashedToken})
-    // 2) check expiry, user existence, then reset password
-    if (!user) {
-        return next(new AppError('Token is invalid or expired',400));
-    }
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpire = undefined;
-    // 3) save and update changedPasswordAt
-    user.passwordChangedAt = Date.now();
-    await user.save();
-    // 4) send jwt
-    createSendToken(user, 200, res);
-})
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
     // 1) get user based on token

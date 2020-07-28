@@ -6,8 +6,8 @@ const navigationItems = () => {
     
     return(
         <div className={classes.NavigationItems}>
-            <NavigationItem link='/' active>Home</NavigationItem>
-            <NavigationItem link='/'>Login</NavigationItem>
+            <NavigationItem link='/'>Home</NavigationItem>
+            <NavigationItem link='/authenticate'>Login</NavigationItem>
         </div>
     )
 

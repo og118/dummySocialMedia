@@ -1,20 +1,32 @@
 const nodemailer = require('nodemailer');
-const { options } = require('../routes/postRoutes');
 
 const sendEmail = async options => {
     // 1) Create transporter
+    // const transporter = nodemailer.createTransport({
+    //     host: process.env.EMAIL_HOST,
+    //     port: process.env.EMAIL_PORT,
+    //     auth: {
+    //         user: process.env.EMAIL_USERNAME,
+    //         pass: process.env.EMAIL_PASSWORD
+    //     }
+    // })
+    console.log(options)
     const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
+        service: 'gmail',
         auth: {
-            user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD
+          user: 'mysocialspace1@gmail.com',
+          pass: 'mySocial123' // naturally, replace both with your real credentials or an application-specific password
+        },
+        tls: {
+            rejectUnauthorized: false
         }
-    })
+      });
+
     // 2) Define email options
     const mailOptions = {
-        from: 'Omkar Ghag <admin@social.com>',
+        from: 'forgotPassword bot <admin@social.com>',
         to: options.email,
+        subject: options.subject,
         text: options.message
     }
     // 3) send email

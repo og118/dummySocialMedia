@@ -8,7 +8,7 @@ const hpp = require('hpp')
 const morgan = require('morgan');
 const globalErrorHandler = require('./controllers/errorController.js')
 const cors = require('cors');
-
+const cookieParser = require('cookie-parser');
 const postRouter = require('./routes/postRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -16,8 +16,23 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
-app.use(cors());
-app.options('*', cors());
+
+
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
+// app.use((req, res, next) => {
+//     app.use(function(req, res, next) {
+//         res.header('Access-Control-Allow-Credentials', true);
+//         res.header('Access-Control-Allow-Origin', req.headers.origin);
+//         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+//         res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+//         next();
+//       });
+//     });
 
 // MIDDLEWARES 
 // Security HTTP headers
@@ -29,6 +44,7 @@ if(process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 // Body Parser, reading data from body to req.body
 app.use(express.json({limit: '10kb'}));
+app.use(cookieParser());
 
 // Data Sanitization against NoSQL query injection
 app.use(monogSanitize());
