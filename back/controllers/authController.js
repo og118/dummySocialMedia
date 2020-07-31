@@ -80,7 +80,9 @@ exports.protect = catchAsync(async (req, res, next) => {
     let token;
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
-    } 
+    }  else if (req.cookies.jwt) {
+        token = req.cookies.jwt
+    }
     if(!token) {
         return next(new AppError('You are not logged in! Please login to get access', 401));
     }
@@ -107,6 +109,40 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.user = currentUser;
     req.userId = currentUser.id
     next();
+})
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+    // 1) get token 
+    if (req.cookies.jwt) {
+    // 2) verify token
+    const decoded = await util.promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+
+    // 3) check if the user is not deleted
+    const currentUser = await User.findById(decoded.id)
+    if(!currentUser || !currentUser.active) {
+        return res.json({
+            user: null
+        });
+    }
+
+    // 4) check if password was changed after token was issued
+    if(currentUser.changedPasswordAfter(decoded.iat)) {
+        return res.json({
+            user: null
+        });
+    }
+
+    // 5) grant access
+    req.user = currentUser;
+    req.userId = currentUser.id
+    res.status(200).json({
+        user: currentUser
+    })
+    return next();
+    }
+    else return res.json({
+        user: null
+    })
 })
 
 // RESTRICT

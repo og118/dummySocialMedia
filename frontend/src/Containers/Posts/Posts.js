@@ -23,10 +23,11 @@ class Posts extends Component {
         }
         Axios({
             method: "GET",
-            url: `http://127.0.0.1:9000/social/posts?sort=${this.state.sortby}`,
+            url: `http://localhost:9000/social/posts?sort=${this.state.sortby}`,
             headers: {
                 "Content-Type": "application/json"
-              }
+              },
+            withCredentials: true
             }).then(res => {
               
               if(prevState.sortby !== this.state.sortby) {
@@ -47,7 +48,8 @@ class Posts extends Component {
         url: `http://localhost:9000/social/posts`,
         headers: {
             "Content-Type": "application/json"
-          }
+        },
+        withCredentials: true
         }).then(res => {
           this.setState({posts: res.data.data, loading: false})
         }).catch(err => {

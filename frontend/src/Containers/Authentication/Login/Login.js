@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import classes from "./Login.module.css";
 import Axios from "axios";
+import { withRouter } from 'react-router-dom'
 
 class Login extends Component {
   state = {
@@ -26,6 +27,7 @@ class Login extends Component {
     })
       .then((res) => {
         console.log(res.data);
+        this.props.history.push("/")
       })
       .catch((err) => {
         console.log(err.response.data);
@@ -49,6 +51,7 @@ class Login extends Component {
   }
 
   render() {
+    console.log(this.props);
     return (
       <div className={classes.loginpage}>
         <div className={classes.form}>
@@ -77,4 +80,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);

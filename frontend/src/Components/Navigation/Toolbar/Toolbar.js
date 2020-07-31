@@ -11,7 +11,7 @@ const toolbar = (props) => {
                 mySocial.com
             </div>
             <nav className={classes.DesktopOnly} >
-                <NavigationItems />
+                <NavigationItems isLoggedIn={props.isLoggedIn} username={props.username}/>
             </nav>
             <ToggleButton clicked={props.toggleSideBar}/>
             
