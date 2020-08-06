@@ -80,3 +80,17 @@ body {
     margin-bottom: 20px;
     width: 100%
 }
+
+.Red {
+  font-weight: bold;
+  color: #ed4956;
+  font-family: "Roboto", sans-serif;
+  font-size: 12px;
+}
+
+.Green {
+  font-weight: bold;
+  color: green;
+  font-family: "Roboto", sans-serif;
+  font-size: 12px;
+}

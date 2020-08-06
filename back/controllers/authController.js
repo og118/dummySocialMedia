@@ -6,6 +6,7 @@ const util = require('util');
 const Post = require('../models/postModel');
 const crypto = require('crypto');
 const sendEmail = require('../utils/email');
+const validator = require('validator')
 
 createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id)
@@ -58,6 +59,9 @@ exports.login = catchAsync( async (req, res, next) => {
     } 
     // 2) check if username exists and password is correct, YES? send token : send err
     if(email) {
+        if(!validator.isEmail(email)) {
+            return next(new AppError('Please Enter a valid email', 403))
+        }
          user = await User.findOne({email: email}).select('+password');
         if(!user || !user.active || !(await user.correctPassword(password, user.password))) {
             return next(new AppError('Incorrect email or password', 403))
@@ -159,6 +163,11 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
     if(!req.body.email) {
         return next(new AppError('Please provide an email', 400))
     }
+
+    if(!validator.isEmail(req.body.email)) {
+        return next(new AppError('Please provide a valid email', 400))
+    }
+    
     // 1) get user email
     const user = await User.findOne({email: req.body.email});
     if(!user || !user.active) {
@@ -169,7 +178,7 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
     await user.save({validateBeforeSave: false});
     // 3) mail token
     const resetURL = `${req.protocol}://${req.get('host')}/social/users/resetPassword/${resetToken}`
-    const message = `Forgot Password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\n If not, ignore the above message.... `
+    const message = `Forgot Password? Paste the token in the token box of the page ${resetToken}. If not, ignore the above message.... `
 
     try{
         await sendEmail({
@@ -193,6 +202,10 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
     // 1) get user based on token
+    if(!req.params.token) {
+        return next(new AppError('Please enter the token sent ot your mail', 400))
+    }
+
     const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
     const user = await User.findOne({passwordResetToken: hashedToken, passwordResetExpire: {$gt: Date.now()}});
