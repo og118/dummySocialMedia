@@ -1,7 +1,8 @@
 import React from 'react'
 
-const myContext = React.createContext({
-    username: ""
+const authContext = React.createContext({
+    userId: null,
+    username: null
 });
 
-export default  myContext
+export default  authContext

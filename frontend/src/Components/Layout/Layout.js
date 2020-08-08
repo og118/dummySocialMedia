@@ -17,8 +17,8 @@ class Layout extends Component {
   render() {
     return (
       <Aux>
-        <Toolbar toggleSideBar={this.toggleSideBar}/>
-        <SideDrawer open={this.state.showSideDrawer} />
+        <Toolbar cookies={this.props.cookies} toggleSideBar={this.toggleSideBar}/>
+        <SideDrawer cookies={this.props.cookies} open={this.state.showSideDrawer} />
         {this.props.children}
       </Aux>
     );

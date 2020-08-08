@@ -44,9 +44,9 @@ class signup extends Component {
           let errmsg = Object.keys(err.response.data.error.errors)
           let errors = []
 
-          errmsg.map((el)=>{
+          errmsg.map((el)=>
             errors.push(err.response.data.error.errors[el].properties.message)
-          })
+          )
           console.log(errors.join(', '))
           
           this.setState({

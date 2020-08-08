@@ -19,7 +19,7 @@ createSendToken = (user, statusCode, res) => {
     
     // if(process.env.NODE_ENV === 'production') cookieOptions.secure = true;
     res.cookie('jwt', token, cookieOptions)
- 
+    res.cookie('user', user, cookieOptions)
 
     res.status(statusCode).json({
         status: 'success',
@@ -94,6 +94,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     // 2) verify token
     const decoded = await util.promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
+    
+
     // 3) check if the user is not deleted
     const currentUser = await User.findById(decoded.id)
     if(!currentUser || !currentUser.active) {
@@ -142,7 +144,6 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     res.status(200).json({
         user: currentUser
     })
-    return next();
     }
     else return res.json({
         user: null

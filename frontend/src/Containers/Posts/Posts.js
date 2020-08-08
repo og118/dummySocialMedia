@@ -4,6 +4,8 @@ import Axios from 'axios'
 import Spinner from './../../Components/UI/Spinner/Spinner';
 import SortBy from './../../Components/SortBy/SortBy'
 import CreatePostButton from './../../Components/CreatePost/CreatePostButton'
+import AuthContext from '../../context/auth-context';
+import {withCookies} from 'react-cookie'
 
 class Posts extends Component {
     state = {
@@ -75,13 +77,35 @@ class Posts extends Component {
 
     }
 
+    static contextType = AuthContext
+
     render() {
         let posts = <Spinner />
+        let cookies = this.props.cookies;
+        let userLoggedin = cookies.get('userLogin')
+        let id =" ";
+        if(userLoggedin) {
+            id = userLoggedin.id
+        }
 
         if(!this.state.loading) {
-            console.log(this.state.posts)
             posts = this.state.posts.map(el =>{
+                let userUpvote = false, userDownvote = false
+                console.log(el)
+                el.upvotes.forEach(e => {console.log(e)
+                    if(e._id === id) {
+                        userUpvote = true
+                        console.log('working')
+                    }
+                })
+                el.downvotes.forEach(e => {console.log(e)
+                    if(e._id === id) {
+                        userDownvote = true
+                    }
+                })
+
                 return(<Post 
+                postId={el._id}
                 title={el.title}
                 content={el.content}
                 createdBy={el.user.username}
@@ -89,6 +113,8 @@ class Posts extends Component {
                 userClick={this.userClicked}
                 upvoteCount={el.upVoteCount}
                 downvoteCount={el.downVoteCount}
+                upvoted = {userUpvote}
+                downvoted = {userDownvote}
                 />)
             }
                 )
@@ -109,4 +135,4 @@ class Posts extends Component {
     }
 } 
 
-export default Posts
+export default withCookies(Posts)

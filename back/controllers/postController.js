@@ -168,7 +168,7 @@ const removeDownvote = (post, userId) => {
 exports.upvotePost = catchAsync(async (req, res, next) => {
     
     let post = await Post.findById(req.params.postId);
-    if(!post || post.show ) {
+    if(!post || !post.show ) {
         return next(new AppError('Post not found', 404))
     }
     let item;

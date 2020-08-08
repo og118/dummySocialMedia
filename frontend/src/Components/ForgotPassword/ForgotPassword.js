@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import classes from "./ForgotPassword.module.css";
 import Axios from 'axios'
 import { withRouter } from 'react-router-dom'
-import Spinner from "../../../Components/UI/Spinner/Spinner";
+import Spinner from "./../UI/Spinner/Spinner";
 
 
 class forgotPassword extends Component {
@@ -41,9 +41,9 @@ class forgotPassword extends Component {
       let errmsg = Object.keys(err.response.data.error.errors)
           let errors = []
 
-          errmsg.map((el)=>{
+          errmsg.map((el)=>
             errors.push(err.response.data.error.errors[el].properties.message)
-          })
+          )
           console.log(errors.join(', '))
           
           this.setState({
@@ -101,7 +101,7 @@ class forgotPassword extends Component {
       attachedClasses.push(classes.Red)
     }
 
-    if(this.state.resetPassword == false) {
+    if(this.state.resetPassword === false) {
       attachedClasses.pop(classes.Green);
       attachedClasses.push(classes.Red)
     }

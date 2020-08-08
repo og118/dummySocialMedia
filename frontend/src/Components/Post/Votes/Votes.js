@@ -7,12 +7,12 @@ class Votes extends Component {
     render() {        
         return(
         <div className={classes.VoteCounter}>
-            <span className={classes.Vote} onClick={this.props.upHandler}>
-                <UpvoteButton red={this.props.up} upvotes={this.props.upvotes}/> 
+            <span className={classes.Vote} onClick={this.props.upHandler} >
+                <UpvoteButton red={this.props.up} upvotes={this.props.upvotes} /> 
             </span >
 
-            <span className={classes.Vote} onClick={this.props.downHandler}>
-                <DownvoteButton blue={this.props.down} downvotes={this.props.downvotes}/>
+            <span className={classes.Vote} onClick={this.props.downHandler} >
+                <DownvoteButton blue={this.props.down} downvotes={this.props.downvotes} />
             </span>
         </div>
         );

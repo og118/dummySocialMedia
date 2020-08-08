@@ -3,62 +3,92 @@ import classes from './Post.module.css'
 import Votes from './Votes/Votes'
 import Aux from './../../hoc/Auxilliary'
 import ToggleFullPost from './ToggleFullPost/ToggleFullPost'
-
+import Axios from 'axios'
+import { withRouter } from 'react-router-dom'
+ 
 class Post extends Component {
     state = {
         upvotes: this.props.upvoteCount,
         downvotes: this.props.downvoteCount,
         showFull: false,
-        up: null,
-        down: null,
+        up: this.props.upvoted,
+        down: this.props.downvoted,
     }
-
+    
     componentWillReceiveProps(nextProps) {
         if(this.props !== nextProps) {
           this.setState({
             upvotes: nextProps.upvoteCount,
-            up: false,
             downvotes: nextProps.downvoteCount,
-            down: false
+            up: nextProps.upvoted,
+            down: nextProps.downvoted
           });
         }
       }
     
     upHandler = () => {
+        console.log(this.props.id)
         console.log('upclick')    
-        this.setState((prevState) => {
-            let upvotes = prevState.upvotes, downvotes = prevState.downvotes;
-            if(prevState.down){
-                downvotes--;
-                upvotes++;
-            }
-            else if(prevState.up){
-                upvotes--
-            } else {
-                upvotes++;
-            }
-            
-            return {down: false, up: !prevState.up, upvotes: upvotes, downvotes: downvotes}
-            // upvote request goes here
-        })
+        // upvote request goes here
+        Axios({
+            method: "GET",
+            url: `http://localhost:9000/social/posts/${this.props.postId}/upvote`,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            withCredentials: true
+        }).then((res) => {
+            console.log(res.data.data); 
+                console.log(res.data.data)
+                this.setState((prevState) => {
+                    let upvotes = prevState.upvotes, downvotes = prevState.downvotes;
+                    if(prevState.down){
+                        downvotes--;
+                        upvotes++;
+                    }
+                    else if(prevState.up){
+                        upvotes--
+                    } else {
+                        upvotes++;
+                    }
+                    return {down: false, up: !prevState.up, upvotes: upvotes, downvotes: downvotes}
+                }) 
+            }).catch(err => {
+              console.log(err.response.data)
+              this.props.history.push('/authenticate')
+            })         
     }
 
     downHandler = () => {
         console.log('downclick', this.state.downvotes)
-        this.setState((prevState) => {
-            let upvotes = prevState.upvotes , downvotes = prevState.downvotes;
-            if(prevState.up){
-                upvotes--;
-                downvotes++;
-            }
-            else if(prevState.down) {
-                downvotes--;
-            } else {
-                downvotes++;
-            }
-            
-            return {up: false, down: !prevState.down, upvotes: upvotes, downvotes: downvotes}
-        })
+        Axios({
+            method: "GET",
+            url: `http://localhost:9000/social/posts/${this.props.postId}/downvote`,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            withCredentials: true
+        }).then((res) => {
+            console.log(res.data.data); 
+            this.setState((prevState) => {
+                let upvotes = prevState.upvotes , downvotes = prevState.downvotes;
+                if(prevState.up){
+                    upvotes--;
+                    downvotes++;
+                }
+                else if(prevState.down) {
+                    downvotes--;
+                } else {
+                    downvotes++;
+                }
+                
+                return {up: false, down: !prevState.down, upvotes: upvotes, downvotes: downvotes}
+            })
+            }).catch(err => {
+              console.log(err.response.data)
+              this.props.history.push('/authenticate')
+            })
+        
         
     }
 
@@ -109,7 +139,6 @@ class Post extends Component {
     render() {
         let origin = Date.parse(new Date(this.props.date));
         let now = Date.now();
-        console.log(this.props.title + ' ' + this.props.upvoteCount)
         return(
             <Aux>
             <div className={classes.Post}>
@@ -124,6 +153,7 @@ class Post extends Component {
                 <span className={classes.Votes}>
                     <hr></hr>
                     <Votes 
+                        postId = {this.props.id}
                         upvotes={this.state.upvotes} 
                         downvotes={this.state.downvotes}
                         up={this.state.up}
@@ -140,4 +170,4 @@ class Post extends Component {
     }
 } 
 
-export default Post
+export default withRouter(Post)

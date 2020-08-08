@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import Login from "./Login/Login";
-import Signup from "./Signup/Signup";
-import ForgotPassword from "./ForgotPassword/ForgotPassword";
+import Login from "./../../Components/Login/Login";
+import Signup from "./../../Components/Signup/Signup";
+import ForgotPassword from "./../../Components/ForgotPassword/ForgotPassword";
 
 class Authenticate extends Component {
   state = {
@@ -44,6 +44,7 @@ class Authenticate extends Component {
           loginType={this.state.loginEmail ? "email" : "username"}
           signup={this.signupLoginToggleHandler}
           forgotPassword={this.forgotPasswordHandler}
+          cookies = {this.props.cookies}
         />
       );
     }

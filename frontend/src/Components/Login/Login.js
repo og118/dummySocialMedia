@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import classes from "./Login.module.css";
 import Axios from "axios";
 import { withRouter } from 'react-router-dom'
-import myContext from './../../../context/auth-context'
 
 class Login extends Component {
  
   state = {
     loggedIn: null,
-    status: ""
+    status: "",
+    userId: null,
+    username: null
   }
 
  login = (event) => {
@@ -38,8 +39,12 @@ class Login extends Component {
         console.log(res.data.data.username)
         this.setState({
           loggedIn: true,
+          username: res.data.data.username,
+          userId: res.data.data.id,
           status: 'Log in successful'
         })
+        let cookies = this.props.cookies;
+        cookies.set('userLogin', res.data.data)
         setTimeout(() => {this.props.history.push("/")}, 1000)
         //  this.props.history.push("/")
       })
@@ -62,8 +67,9 @@ class Login extends Component {
     }
 
     return (
-      
       <div className={classes.loginpage}>
+      
+      
         <div className={classes.form}>
           <form className={classes.loginform} id='loginForm'>
             <input
@@ -86,7 +92,7 @@ class Login extends Component {
             </p>
           </form>
         </div>
-    
+      
       
 
      </div>
