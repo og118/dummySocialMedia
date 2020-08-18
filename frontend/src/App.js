@@ -21,7 +21,7 @@ class App extends Component {
           />
           <Route
             path="/createPost"
-            render={() => <CreatePost cookies={this.props.cookies} />}
+            render={() => <CreatePost cookies={this.props.cookies} errormsg={this.props.errormsg}/>}
           />
 
           {/* <Route path="/authenticate/signup" component={Signup} /> */}

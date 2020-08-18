@@ -48,10 +48,10 @@ class Login extends Component {
         cookies.set("userLogin", res.data.data);
         setTimeout(() => {this.props.history.push("/")}, 1000)
         //  this.props.history.push("/")
-      } else if (res.response) {
+      } else {
         this.setState({
           loggedIn: false,
-          status: res.response.data.message,
+          status: this.props.errormsg.message,
         });
       }
     });

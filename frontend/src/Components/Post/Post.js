@@ -15,16 +15,16 @@ class Post extends Component {
         down: this.props.downvoted,
     }
     
-    componentWillReceiveProps(nextProps) {
-        if(this.props !== nextProps) {
-          this.setState({
-            upvotes: nextProps.upvoteCount,
-            downvotes: nextProps.downvoteCount,
-            up: nextProps.upvoted,
-            down: nextProps.downvoted
-          });
-        }
-      }
+    // componentWillReceiveProps(nextProps) {
+    //     if(this.props !== nextProps) {
+    //       this.setState({
+    //         upvotes: nextProps.upvoteCount,
+    //         downvotes: nextProps.downvoteCount,
+    //         up: nextProps.upvoted,
+    //         down: nextProps.downvoted
+    //       });
+    //     }
+    //   }
     
     upHandler = () => {
         // console.log(this.props.id)
@@ -39,23 +39,14 @@ class Post extends Component {
             withCredentials: true
         }).then((res) => {
                 if(res.data) {
-                this.setState((prevState) => {
-                    let upvotes = prevState.upvotes, downvotes = prevState.downvotes;
-                    if(prevState.down){
-                        downvotes--;
-                        upvotes++;
-                    }
-                    else if(prevState.up){
-                        upvotes--
-                    } else {
-                        upvotes++;
-                    }
-                    return {down: false, up: !prevState.up, upvotes: upvotes, downvotes: downvotes}
-                }) 
+                 this.setState({
+                    upvotes: res.data.data.upVoteCount,
+                    downvotes: res.data.data.downVoteCount,
+                    down: false,
+                    up: !this.state.up
+                })
             }
-            }).catch(err =>
-                console.log(err)
-            ) 
+            })
     }
 
     downHandler = () => {
@@ -69,23 +60,16 @@ class Post extends Component {
             withCredentials: true
         }).then((res) => {
             if(res.data) {
-            this.setState((prevState) => {
-                let upvotes = prevState.upvotes , downvotes = prevState.downvotes;
-                if(prevState.up){
-                    upvotes--;
-                    downvotes++;
-                }
-                else if(prevState.down) {
-                    downvotes--;
-                } else {
-                    downvotes++;
-                }
-                
-                return {up: false, down: !prevState.down, upvotes: upvotes, downvotes: downvotes}
-            })}
-        }).catch(err =>
-                console.log(err)
-            ) 
+                console.log(res.data.data.downVoteCount)
+            // this.setState()
+            this.setState({
+                downvotes: res.data.data.downVoteCount,
+                upvotes: res.data.data.upVoteCount,
+                down: !this.state.down,
+                up: false
+            })
+        }
+        })
     }
 
 

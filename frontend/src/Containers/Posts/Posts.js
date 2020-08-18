@@ -15,34 +15,6 @@ class Posts extends Component {
         sortby: '-createdAt',
     }
 
-    // componentDidUpdate(prevProps, prevState) {
-    //     console.log('cdu')
-    //     if(prevState.sortby !== this.state.sortby) {
-    //         this.setState({
-    //             loading: true
-    //         })
-    //     }
-    //     Axios({
-    //         method: "GET",
-    //         url: `http://localhost:9000/social/posts?sort=${this.state.sortby}`,
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //           },
-    //         withCredentials: true
-    //         }).then(res => {
-              
-    //           if(prevState.sortby !== this.state.sortby) {
-    //               this.setState({
-    //                   posts: res.data.data,
-    //                   loading: false
-    //               })
-    //           }
-            
-    //         }).catch(err => {
-    //             console.log(err);
-    //         });
-    // }
-
     componentDidMount() {
         console.log('cdm')
        Axios({
@@ -71,7 +43,7 @@ class Posts extends Component {
 
 
     optionChangeHandler = (event) => {
-        let sortby = event.target.value;
+        let sortby = event.target.value + ",-createdAt";
             this.setState({loading: true})
             Axios({
             method: "GET",
