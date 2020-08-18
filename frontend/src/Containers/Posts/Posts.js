@@ -4,47 +4,47 @@ import Axios from 'axios'
 import Spinner from './../../Components/UI/Spinner/Spinner';
 import SortBy from './../../Components/SortBy/SortBy'
 import CreatePostButton from './../../Components/CreatePost/CreatePostButton'
-import AuthContext from '../../context/auth-context';
-import {withCookies} from 'react-cookie'
+import { withCookies } from 'react-cookie'
+import { withRouter } from 'react-router-dom'
+
 
 class Posts extends Component {
     state = {
         posts: null,
         loading: true,
-        sortby: '-createdAt'
+        sortby: '-createdAt',
     }
 
-    
-
-
-    componentDidUpdate(prevProps, prevState) {
-        if(prevState.sortby !== this.state.sortby) {
-            this.setState({
-                loading: true
-            })
-        }
-        Axios({
-            method: "GET",
-            url: `http://localhost:9000/social/posts?sort=${this.state.sortby}`,
-            headers: {
-                "Content-Type": "application/json"
-              },
-            withCredentials: true
-            }).then(res => {
+    // componentDidUpdate(prevProps, prevState) {
+    //     console.log('cdu')
+    //     if(prevState.sortby !== this.state.sortby) {
+    //         this.setState({
+    //             loading: true
+    //         })
+    //     }
+    //     Axios({
+    //         method: "GET",
+    //         url: `http://localhost:9000/social/posts?sort=${this.state.sortby}`,
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //           },
+    //         withCredentials: true
+    //         }).then(res => {
               
-              if(prevState.sortby !== this.state.sortby) {
-                  this.setState({
-                      posts: res.data.data,
-                      loading: false
-                  })
-              }
+    //           if(prevState.sortby !== this.state.sortby) {
+    //               this.setState({
+    //                   posts: res.data.data,
+    //                   loading: false
+    //               })
+    //           }
             
-            }).catch(err => {
-                console.log(err);
-            });
-    }
+    //         }).catch(err => {
+    //             console.log(err);
+    //         });
+    // }
 
     componentDidMount() {
+        console.log('cdm')
        Axios({
         method: "GET",
         url: `http://localhost:9000/social/posts`,
@@ -71,13 +71,40 @@ class Posts extends Component {
 
 
     optionChangeHandler = (event) => {
-        this.setState({
-            sortby: event.target.value
-        })
+        let sortby = event.target.value;
+            this.setState({loading: true})
+            Axios({
+            method: "GET",
+            url: `http://localhost:9000/social/posts?sort=${sortby}`,
+            headers: {
+                "Content-Type": "application/json"
+              },
+            withCredentials: true
+            }).then(res => {
+                    this.setState({
+                      posts: res.data.data,
+                      loading: false
+                  })
 
+            
+            }).catch(err => {
+                console.log(err);
+            });
     }
 
-    static contextType = AuthContext
+    
+
+    createPostHandler = () => {
+            this.props.history.push('/createPost')
+    }
+
+    modalShowHandler = () => {
+        this.setState({
+            modalShow: false
+        })
+    }
+
+
 
     render() {
         let posts = <Spinner />
@@ -91,14 +118,16 @@ class Posts extends Component {
         if(!this.state.loading) {
             posts = this.state.posts.map(el =>{
                 let userUpvote = false, userDownvote = false
-                console.log(el)
-                el.upvotes.forEach(e => {console.log(e)
+                // console.log(el)
+                el.upvotes.forEach(e => {
+                    // console.log(e)
                     if(e._id === id) {
                         userUpvote = true
-                        console.log('working')
+                        // console.log('working')
                     }
                 })
-                el.downvotes.forEach(e => {console.log(e)
+                el.downvotes.forEach(e => {
+                    // console.log(e)
                     if(e._id === id) {
                         userDownvote = true
                     }
@@ -123,16 +152,14 @@ class Posts extends Component {
 
         return(
             <div>
-                <CreatePostButton clicked={this.showCreateScreenHandler} /> 
+                <CreatePostButton clicked={this.createPostHandler} /> 
                 <SortBy optionChange={this.optionChangeHandler}/>
                 {
                   posts  
                 }
             </div>
         )
-    
-
     }
 } 
 
-export default withCookies(Posts)
+export default withRouter(withCookies(Posts));

@@ -14,9 +14,8 @@ router
 
 router.post('/signup', authController.signup)
 router.post('/login', authController.login)
-router.get('/isLoggedIn', authController.isLoggedIn)
 router.post('/forgotPassword', authController.forgotPassword)
-router.patch('/resetPassword/:token', authController.resetPassword)
+router.patch('/resetPassword', authController.resetPassword)
 
 router.get('/me', authController.protect, userController.getMe, userController.getUser)
 router.patch('/updateMe', authController.protect, userController.updateMe)

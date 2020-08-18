@@ -1,8 +1,6 @@
 const User = require('./../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('./../utils/AppError');
-const { expectCt } = require('helmet');
-const Post = require('../models/postModel');
 const sendEmail = require('./../utils/email')
 
 const hideObj = {active: { $ne : false}, blacklisted: {$ne : true}};

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import classes from './Post.module.css'
 import Votes from './Votes/Votes'
-import Aux from './../../hoc/Auxilliary'
+import Aux from '../../hoc/Auxilliary/Auxilliary'
 import ToggleFullPost from './ToggleFullPost/ToggleFullPost'
 import Axios from 'axios'
 import { withRouter } from 'react-router-dom'
@@ -27,8 +27,8 @@ class Post extends Component {
       }
     
     upHandler = () => {
-        console.log(this.props.id)
-        console.log('upclick')    
+        // console.log(this.props.id)
+        // console.log('upclick')    
         // upvote request goes here
         Axios({
             method: "GET",
@@ -38,8 +38,7 @@ class Post extends Component {
             },
             withCredentials: true
         }).then((res) => {
-            console.log(res.data.data); 
-                console.log(res.data.data)
+                if(res.data) {
                 this.setState((prevState) => {
                     let upvotes = prevState.upvotes, downvotes = prevState.downvotes;
                     if(prevState.down){
@@ -53,14 +52,14 @@ class Post extends Component {
                     }
                     return {down: false, up: !prevState.up, upvotes: upvotes, downvotes: downvotes}
                 }) 
-            }).catch(err => {
-              console.log(err.response.data)
-              this.props.history.push('/authenticate')
-            })         
+            }
+            }).catch(err =>
+                console.log(err)
+            ) 
     }
 
     downHandler = () => {
-        console.log('downclick', this.state.downvotes)
+        // console.log('downclick', this.state.downvotes)
         Axios({
             method: "GET",
             url: `http://localhost:9000/social/posts/${this.props.postId}/downvote`,
@@ -69,7 +68,7 @@ class Post extends Component {
             },
             withCredentials: true
         }).then((res) => {
-            console.log(res.data.data); 
+            if(res.data) {
             this.setState((prevState) => {
                 let upvotes = prevState.upvotes , downvotes = prevState.downvotes;
                 if(prevState.up){
@@ -83,13 +82,10 @@ class Post extends Component {
                 }
                 
                 return {up: false, down: !prevState.down, upvotes: upvotes, downvotes: downvotes}
-            })
-            }).catch(err => {
-              console.log(err.response.data)
-              this.props.history.push('/authenticate')
-            })
-        
-        
+            })}
+        }).catch(err =>
+                console.log(err)
+            ) 
     }
 
 
@@ -104,28 +100,30 @@ class Post extends Component {
 
     calculateTime = (now, origin) => {
         let createdAt = (now-origin)/1000
+
         if(createdAt < 60) {
-            createdAt = `${createdAt.toFixed(0)} seconds ago`
+            createdAt = `${Math.floor(createdAt)} seconds ago`
         } else {
             createdAt = createdAt/60;
+            // console.log(createdAt)
             if(createdAt < 60) {
-                createdAt = `${createdAt.toFixed(0)} minute${(createdAt>=2) ? 's ':' '}ago`
+                createdAt = `${Math.floor(createdAt)} minute${(createdAt>=2) ? 's ':' '}ago`
             } else {
                 createdAt = createdAt/60;
                 if(createdAt<24) {
-                    createdAt = `${createdAt.toFixed(0)} hour${(createdAt>=2) ? 's ':' '}ago`
+                    createdAt = `${Math.floor(createdAt)} hour${(createdAt>=2) ? 's ':' '}ago`
                 } else {
                     createdAt = createdAt/24
                     if(createdAt<30) {
-                        createdAt = `${createdAt.toFixed(0)} day${(createdAt>=2) ? 's ':' '}ago`
+                        createdAt = `${Math.floor(createdAt)} day${(createdAt>=2) ? 's ':' '}ago`
                     } else {
                         createdAt = createdAt/30
                         if(createdAt<12) {
-                            createdAt=`${createdAt.toFixed(0)} month${(createdAt>=2) ? 's ':' '}ago`
+                            createdAt=`${Math.floor(createdAt)} month${(createdAt>=2) ? 's ':' '}ago`
                         } else {
                             createdAt=createdAt/12
                             if(createdAt) {
-                                createdAt=`${createdAt.toFixed(0)} year${(createdAt>=2) ? 's ':' '}ago`
+                                createdAt=`${Math.floor(createdAt)} year${(createdAt>=2) ? 's ':' '}ago`
                             }
                         }
 
@@ -137,8 +135,16 @@ class Post extends Component {
     }
 
     render() {
-        let origin = Date.parse(new Date(this.props.date));
+        let origin = Date.parse(this.props.date);
+        // console.log(this.props.title, new Date(this.props.date))
         let now = Date.now();
+        // console.log(now)
+        let contentReduced;
+        if(this.props.content.length > 820) { 
+             contentReduced = this.props.content.slice(0, 820) + "..."
+        } else
+         contentReduced = this.props.content.slice(0, 820)
+        
         return(
             <Aux>
             <div className={classes.Post}>
@@ -148,7 +154,7 @@ class Post extends Component {
                     <span className={classes.Username} onClick={this.props.userClick}> {this.props.createdBy}</span>, {this.calculateTime(now, origin)}
                 </div>
 
-                <div className={classes.Content}>{this.props.content}</div>
+                <div className={classes.Content}>{  !this.state.showFull ? contentReduced : this.props.content}</div>
 
                 <span className={classes.Votes}>
                     <hr></hr>
@@ -163,11 +169,11 @@ class Post extends Component {
                     />
                 </span>
 
-                <ToggleFullPost togglePost={this.togglePostHandler} full={this.state.showFull}/>
+            {this.props.content.length > 820 ? <ToggleFullPost togglePost={this.togglePostHandler} full={this.state.showFull}/> : null }
             </div>
             </Aux>
         );
     }
 } 
 
-export default withRouter(Post)
+export default (withRouter(Post))

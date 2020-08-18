@@ -2,14 +2,15 @@ import React, { Component } from "react";
 import Login from "./../../Components/Login/Login";
 import Signup from "./../../Components/Signup/Signup";
 import ForgotPassword from "./../../Components/ForgotPassword/ForgotPassword";
+import {withRouter} from 'react-router-dom'
 
 class Authenticate extends Component {
   state = {
     loginEmail: false,
     signup: false,
     forgotPassword: false,
-  };
 
+  };
 
 
   loginEmailHandler = () => {
@@ -33,9 +34,9 @@ class Authenticate extends Component {
   render() {
 
     if (this.state.signup) {
-      return <Signup login={this.signupLoginToggleHandler} />;
+      return <Signup login={this.signupLoginToggleHandler} errormsg={this.props.errormsg} />;
     } else if(this.state.forgotPassword) {
-        return <ForgotPassword signup={this.signupLoginToggleHandler} login={this.loginEmailHandler}/>
+        return <ForgotPassword signup={this.signupLoginToggleHandler} login={this.loginEmailHandler} errormsg={this.props.errormsg}/>
     }
     else {
       return (
@@ -45,10 +46,11 @@ class Authenticate extends Component {
           signup={this.signupLoginToggleHandler}
           forgotPassword={this.forgotPasswordHandler}
           cookies = {this.props.cookies}
+          errormsg={this.props.errormsg}
         />
       );
     }
   }
 }
 
-export default Authenticate;
+export default withRouter(Authenticate);

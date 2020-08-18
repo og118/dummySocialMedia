@@ -3,7 +3,6 @@ const catchAsync = require('./../utils/catchAsync')
 const User = require('./../models/userModel')
 const AppError = require('./../utils/AppError');
 const util = require('util');
-const Post = require('../models/postModel');
 const crypto = require('crypto');
 const sendEmail = require('../utils/email');
 const validator = require('validator')
@@ -117,39 +116,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     next();
 })
 
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
-    // 1) get token 
-    if (req.cookies.jwt) {
-    // 2) verify token
-    const decoded = await util.promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
-
-    // 3) check if the user is not deleted
-    const currentUser = await User.findById(decoded.id)
-    if(!currentUser || !currentUser.active) {
-        return res.json({
-            user: null
-        });
-    }
-
-    // 4) check if password was changed after token was issued
-    if(currentUser.changedPasswordAfter(decoded.iat)) {
-        return res.json({
-            user: null
-        });
-    }
-
-    // 5) grant access
-    req.user = currentUser;
-    req.userId = currentUser.id
-    res.status(200).json({
-        user: currentUser
-    })
-    }
-    else return res.json({
-        user: null
-    })
-})
-
 // RESTRICT
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
@@ -203,11 +169,11 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
     // 1) get user based on token
-    if(!req.params.token) {
+    if(!req.body.token) {
         return next(new AppError('Please enter the token sent ot your mail', 400))
     }
 
-    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const hashedToken = crypto.createHash('sha256').update(req.body.token).digest('hex');
 
     const user = await User.findOne({passwordResetToken: hashedToken, passwordResetExpire: {$gt: Date.now()}});
 

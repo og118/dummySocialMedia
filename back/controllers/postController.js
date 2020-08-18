@@ -26,7 +26,7 @@ exports.verifyUser = catchAsync(async (req, res, next) => {
 const hideObj = {show: { $ne : false}};
 
 exports.getPosts = catchAsync(async (req, res, next) => {
-    
+    console.log('getPosts')
     const features = new APIFeatures(Post.find(hideObj), req.query).sort().limitFields();
     const posts = await features.query;
     res.status(200).json({
@@ -62,9 +62,10 @@ exports.createPost = catchAsync(async (req, res, next) => {
     const post = await Post.create({
         content: req.body.content,
         title: req.body.title,
-        user: req.body.user
+        user: req.body.user,
+        createdAt: Date.now()
     })
-    res.status(404).json({
+    res.status(200).json({
         status: "success",
         data: post
     })

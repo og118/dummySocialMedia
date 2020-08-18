@@ -41,17 +41,21 @@ class signup extends Component {
         })
         .catch((err) => {
           console.log(err.response.data)
-          let errmsg = Object.keys(err.response.data.error.errors)
-          let errors = []
-
-          errmsg.map((el)=>
+          let errmsg, errors;
+          if(err.response.data.error.errors) {
+           errmsg = Object.keys(err.response.data.error.errors)
+           errors = []
+           errmsg.map((el)=>
             errors.push(err.response.data.error.errors[el].properties.message)
           )
-          console.log(errors.join(', '))
+          errors = errors.join(', ')
+          } else {
+            errors = err.response.data.error
+          }
           
           this.setState({
             signedUp: false,
-            status: errors.join(', ')
+            status: errors
           })
         });
 

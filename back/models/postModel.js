@@ -7,7 +7,8 @@ const postSchema = new mongoose.Schema({
     },
     content : {
         type: String,
-        required: [true, 'Post must have content']
+        required: [true, 'Post must have content'],
+        trim: true
     },
     upVoteCount : {
         type: Number,
@@ -20,7 +21,7 @@ const postSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: new Date(Date.now())
     },
     user: {
         type: mongoose.Schema.ObjectId,

@@ -7,7 +7,7 @@ import Spinner from "./../UI/Spinner/Spinner";
 
 class forgotPassword extends Component {
   state = {
-    status : "",
+    status : this.props.errormsg,
     forgotPassword : null,
     resetPassword: null,
     loading: null,
@@ -20,43 +20,55 @@ class forgotPassword extends Component {
     let token = document.getElementsByName('token')[0].value;
     Axios({
       method: "PATCH",
-      url: `http://localhost:9000/social/users/resetPassword/${token}`,
+      url: `http://localhost:9000/social/users/resetPassword`,
       headers: {
         "Content-Type": "application/json",
       },
       data: {
         password: password,
-        passwordConfirm: passwordConfirm
+        passwordConfirm: passwordConfirm,
+        token: token
       },
     }).then((res) => {
       console.log(res.data)
+      if(res.data) {
       this.setState({
         status: "Password Updated Successfully",
         resetPassword: true
       });
-      setTimeout(() => {this.props.history.push("/")}, 1000)
-    }).catch((err) => {
-      console.log(err.response.data)
-      if(err.response.data.error.errors){
-      let errmsg = Object.keys(err.response.data.error.errors)
-          let errors = []
+    }
 
-          errmsg.map((el)=>
-            errors.push(err.response.data.error.errors[el].properties.message)
-          )
-          console.log(errors.join(', '))
-          
-          this.setState({
-            resetPassword: false,
-            status: errors.join(', ')
-      })}
-      else {
-        this.setState({
-          resetPassword: false,
-          status: "Invalid/Expired token"
-        })
-      }
+    else if(res.response) {
+      this.setState({
+        status: res.response.data.message,
+        resetPassword: false
+      });
+    }
+      // setTimeout(() => {this.props.history.push("/")}, 1000)
     })
+    // .catch((err) => {
+    //   console.log(err)
+    //   if(err.response.data.error.errors){
+    //   let errmsg = Object.keys(err.response.data.error.errors)
+    //       let errors = []
+
+    //       errmsg.map((el)=>
+    //         errors.push(err.response.data.error.errors[el].properties.message)
+    //       )
+    //       console.log(errors.join(', '))
+          
+    //       this.setState({
+    //         resetPassword: false,
+    //         status: errors.join(', ')
+    //   })
+    // }
+    //   else {
+    //     this.setState({
+    //       resetPassword: false,
+    //       status: "Invalid/Expired token"
+    //     })
+    //   }
+    // })
     
   }
 
@@ -75,21 +87,23 @@ class forgotPassword extends Component {
         },
       })
         .then((res) => {
-          console.log(res.data);
+          if(res.data) {
           this.setState({
             status: res.data.message,
             forgotPassword: true,
             loading: false
           })
-        })
-        .catch((err) => {
-          this.setState({
-            status: err.response.data.message,
-            forgotPassword: false,
-            loading: false
-          })
-          console.log(err.response.data);
-        });
+        setTimeout(() => {this.props.history.push("/")}, 1000)
+        }
+          else if(res.response.data) {
+            this.setState({
+              status: res.response.data.message,
+              forgotPassword: false,
+              loading: false
+            })}
+          }
+          //no point of writing catch block...
+        )
 
   };
   render() {
@@ -109,12 +123,12 @@ class forgotPassword extends Component {
     if(this.state.loading === true) {
       content = <Spinner />
     } else content = (<form className={classes.loginform}>
-      <input type="text" placeholder="email" name='email'/>
+      {this.state.forgotPassword ? null : <input type="text" placeholder="email" name='email'/>}
       {this.state.forgotPassword ? <div><input type="text" placeholder="token" name='token'/>
       <input type="password" placeholder="New Password" name='password'/>
       <input type="password" placeholder="Confirm New Password" name='passwordConfirm'/></div> : null}
       {this.state.forgotPassword ? <button onClick={this.resetPasswordHandler}>reset password</button> : <button onClick={this.forgotPasswordHandler}>forgot password</button> }
-      <span class={attachedClasses.join(' ')}>{this.state.status}</span>
+      <span class={attachedClasses.join(' ')}>{this.state.forgotPassword === null ? " " : this.state.status}</span>
       <p className={classes.message} onClick={this.props.login}>
         Log-in
       </p>

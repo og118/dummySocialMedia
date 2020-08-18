@@ -1,5 +1,7 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
 .SortBy {
-    font-family: 'Ubuntu'; 
+    font-family: 'Roboto', sans-serif; 
     width: 80%;
     margin: auto;
     margin-top: 20px;
