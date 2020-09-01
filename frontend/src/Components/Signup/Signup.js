@@ -3,6 +3,7 @@ import classes from "./Signup.module.css";
 import Axios from "axios";
 import { withRouter } from "react-router-dom";
 import Spinner from "../UI/Spinner/Spinner";
+import { withCookies } from "react-cookie";
 
 class signup extends Component {
   state = {
@@ -17,7 +18,7 @@ class signup extends Component {
     let username = document.getElementsByName("username")[0].value;
     let password = document.getElementsByName("password")[0].value;
     let passwordConfirm = document.getElementsByName("confirmPassword")[0].value;
-
+    // let bio = document.getElementsByName("bio")[0].value
     this.setState({loading: true})
     Axios({
       method: "POST",
@@ -31,6 +32,7 @@ class signup extends Component {
         username: username,
         password: password,
         passwordConfirm: passwordConfirm,
+        // bio: bio
       },
     }).then((res) => {
       console.log("res recieved")
@@ -41,6 +43,9 @@ class signup extends Component {
           status: "Account Created Successfully",
           loading: false
         });
+        let cookies = this.props.cookies;
+        cookies.set("userLogin", res.data.data);
+  
         setTimeout(() => {
           this.props.history.push("/");
         }, 1000);
@@ -63,6 +68,11 @@ class signup extends Component {
           status: this.props.errormsg.message,
           loading: false
         })
+        document.getElementsByName('name')[0].value = name;
+        document.getElementsByName('email')[0].value = email;
+        document.getElementsByName('password')[0].value = password;
+        document.getElementsByName('confirmPassword')[0].value = passwordConfirm;
+        document.getElementsByName('username')[0].value = username;
       }
       // } else if (res.response) {
       //   console.log(res.response.data);
@@ -125,8 +135,11 @@ class signup extends Component {
             <input
               type="password"
               placeholder=" confirm password"
-              name="confirmPassword"
+              name=
+              "confirmPassword"
             />
+            {/* <textarea placeholder="Bio... (optional, will appear on your profile page)" name="bio"/> */}
+
             <button onClick={this.signUp}>create</button>
             <span class={attachedClasses.join(" ")}>{this.state.status}</span>
             <p className={classes.message} onClick={this.props.login}>
@@ -139,4 +152,4 @@ class signup extends Component {
   }
 }
 
-export default withRouter(signup);
+export default withRouter(withCookies(signup));

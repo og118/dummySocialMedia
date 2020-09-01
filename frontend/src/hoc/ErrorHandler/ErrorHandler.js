@@ -21,6 +21,7 @@ const errorHandler = (WrappedComponent) => {
                 // console.log(res);
                 return res;
             }, err => {
+                console.log(err);
                 this.setState({error: err, hasError: true})  
                 return (err)
             })
@@ -40,11 +41,15 @@ const errorHandler = (WrappedComponent) => {
                 if(this.state.error.response){
                 if(this.state.error.response.data) {
                     err=this.state.error.response.data
-                } } else err.message = "Network Error, Please Try Again Later"
+                } } 
+                else err.message = "Network Error, Please Try Again Later"
                         
+                if(err.message === "jwt expired") {
+                    err.message = "Session Expired. Please Log In Again"
+                }
             }
             if(this.state.hasError) {
-                modal = <Modal show clicked={this.closeErrorHandler}><i class='fas fa-ban' style={{color: "red"}}></i> 
+                modal = <Modal show clicked={this.closeErrorHandler} type="errorModal"><i class='fas fa-ban' style={{color: "red"}}></i> 
 
                 {" "+err.message}
                 <br></br>
@@ -52,7 +57,7 @@ const errorHandler = (WrappedComponent) => {
             }
             return (
                 <Aux>
-                    {this.props.history.location.pathname==="/"? modal: null} 
+                    {this.props.history.location.pathname==="/" ||this.props.history.location.pathname==="/user/:id" ? modal: null} 
                     <WrappedComponent {...this.props} errormsg={err} />
                 </Aux>
             );        

@@ -6,6 +6,7 @@ import SortBy from './../../Components/SortBy/SortBy'
 import CreatePostButton from './../../Components/CreatePost/CreatePostButton'
 import { withCookies } from 'react-cookie'
 import { withRouter } from 'react-router-dom'
+import UserCard from './../../Components/UserCard/UserCard'
 
 
 class Posts extends Component {
@@ -13,13 +14,15 @@ class Posts extends Component {
         posts: null,
         loading: true,
         sortby: '-createdAt',
+        showUser: false,
+        user: null
     }
 
     componentDidMount() {
         console.log('cdm')
        Axios({
         method: "GET",
-        url: `http://localhost:9000/social/posts`,
+        url: `http://localhost:9000/social/posts${this.props.user ? `?user=${this.props.user}` : ' '}`,
         headers: {
             "Content-Type": "application/json"
         },
@@ -32,22 +35,33 @@ class Posts extends Component {
     }
 
     // to get user when clicked
-    //  userClicked = () => {
-    //     Axios.get('http://localhost:9000/social/users/')
-    //     .then(res => {
-    //             console.log(res)
-    //         }).catch(err => {
-    //             console.log(err)
-    //         })
-    // }
+     userShowHandler = (id) => {
+         if(id) {
+             this.setState({showUser: true})
+        Axios.get(`http://localhost:9000/social/users/${id}`)
+        .then(res => {
+                if(res.data) {
+                    console.log(res.data.data)
+                    this.setState({user: res.data.data})
+                }
+            })
+        } else {
+            this.setState({showUser: false, user:null})
+        }
+    }
 
 
     optionChangeHandler = (event) => {
-        let sortby = event.target.value + ",-createdAt";
+        let sortby 
+        if(event.target.value === "createdAt") {
+            sortby = event.target.value
+        } else {
+            sortby = event.target.value + ",-createdAt"
+        }
             this.setState({loading: true})
             Axios({
             method: "GET",
-            url: `http://localhost:9000/social/posts?sort=${sortby}`,
+            url: `http://localhost:9000/social/posts?sort=${sortby}${this.props.user ? `&user=${this.props.user}` : ' '}`,
             headers: {
                 "Content-Type": "application/json"
               },
@@ -79,6 +93,7 @@ class Posts extends Component {
 
 
     render() {
+        // console.log(this.props.user)
         let posts = <Spinner />
         let cookies = this.props.cookies;
         let userLoggedin = cookies.get('userLogin')
@@ -89,7 +104,7 @@ class Posts extends Component {
 
         if(!this.state.loading) {
             posts = this.state.posts.map(el =>{
-                let userUpvote = false, userDownvote = false
+                let userUpvote = false, userDownvote = false, userPost = false
                 // console.log(el)
                 el.upvotes.forEach(e => {
                     // console.log(e)
@@ -104,18 +119,23 @@ class Posts extends Component {
                         userDownvote = true
                     }
                 })
+                if(el.user) {
+                if(el.user._id === id) {
+                    userPost = true;
+                }}
 
                 return(<Post 
                 postId={el._id}
                 title={el.title}
                 content={el.content}
-                createdBy={el.user.username}
+                createdBy={el.user ? el.user.username: '[deleted]'}
                 date={el.createdAt}
-                userClick={this.userClicked}
+                userClick={() => this.userShowHandler(el.user._id)}
                 upvoteCount={el.upVoteCount}
                 downvoteCount={el.downVoteCount}
                 upvoted = {userUpvote}
                 downvoted = {userDownvote}
+                userPost = {userPost}
                 />)
             }
                 )
@@ -124,11 +144,13 @@ class Posts extends Component {
 
         return(
             <div>
-                <CreatePostButton clicked={this.createPostHandler} /> 
+                
+                {this.props.history.location.pathname === '/' ? <CreatePostButton clicked={this.createPostHandler} /> : null }
                 <SortBy optionChange={this.optionChangeHandler}/>
                 {
                   posts  
                 }
+                {this.state.showUser ? <UserCard clicked={() => this.userShowHandler(null)} user={this.state.user}/> : null}
             </div>
         )
     }

@@ -7,8 +7,7 @@ const postSchema = new mongoose.Schema({
     },
     content : {
         type: String,
-        required: [true, 'Post must have content'],
-        trim: true
+        required: [true, 'Post must have content']
     },
     upVoteCount : {
         type: Number,

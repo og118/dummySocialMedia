@@ -24,6 +24,15 @@ class APIFeatures {
        }
        return this;
    }
+
+   filter() {
+    const queryObj = {...this.queryString};
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach(el => delete queryObj[el]);
+    let queryStr = JSON.stringify(queryObj);
+    this.query = this.query.find(JSON.parse(queryStr));
+    return this;
+   }
 }
 
 module.exports= APIFeatures;

@@ -27,7 +27,7 @@ const hideObj = {show: { $ne : false}};
 
 exports.getPosts = catchAsync(async (req, res, next) => {
     console.log('getPosts')
-    const features = new APIFeatures(Post.find(hideObj), req.query).sort().limitFields();
+    const features = new APIFeatures(Post.find(hideObj), req.query).sort().limitFields().filter();
     const posts = await features.query;
     res.status(200).json({
         status: "success",
@@ -44,7 +44,7 @@ exports.getPost = catchAsync(async (req, res, next) => {
         return next(new AppError('Post not found', 404))
     }
     if(post.show) {
-        res.status(404).json({
+        res.status(200).json({
             status: "success",
             data: post
         })
@@ -82,7 +82,7 @@ exports.updatePost = catchAsync( async (req, res, next) => {
     
     
 
-    res.status(404).json({
+    res.status(200).json({
         status: "success",
         data: post
     });

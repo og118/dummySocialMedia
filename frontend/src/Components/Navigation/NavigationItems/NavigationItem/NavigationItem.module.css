@@ -12,7 +12,7 @@
     margin-left: -19px;
   }
   
-  .NavigationItem, a {
+  .NavigationItem a {
     text-decoration: none;
     padding: 20px;
     border-radius: 5px;

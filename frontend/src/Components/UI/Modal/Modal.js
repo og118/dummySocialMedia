@@ -3,11 +3,18 @@ import classes from "./Modal.module.css";
 import Backdrop from "./../Backdrop/Backdrop";
 import Aux from "./../../../hoc/Auxilliary/Auxilliary";
 
-const modal = (props) => (
+const modal = (props) => {
+   let modalClass = [];
+   if(props.type === "errorModal") {
+     modalClass.push(classes.Error)
+   } else if(props.type === "userCard") {
+     modalClass.push(classes.UserCard)
+   }
+  return(
   <Aux>
     <Backdrop clicked={props.clicked} show={props.show} />
     <div
-      className={classes.Modal}
+      className={modalClass}
       style={{
         transform: props.show ? "translateY(0)" : "translateY(-100vh)",
         opacity: props.show ? "1" : "0",
@@ -16,6 +23,6 @@ const modal = (props) => (
         {props.children}    
     </div>
   </Aux>
-);
+)};
 
 export default modal;

@@ -68,6 +68,14 @@ const userSchema = new mongoose.Schema({
     blacklisted: {
         type: Boolean,
         default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
+    bio: {
+        type: String,
+        maxlength: [32, 'Your Bio should not exceed over 32 characters' ]
     }
 
 },{
