@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Posts from "./../../Containers/Posts/Posts";
 import { withRouter } from "react-router-dom";
+import { withCookies } from "react-cookie";
 import Axios from "axios";
 import classes from "./UserPage.module.css";
 import userImg from "./../../assets/img/userImg.png";
@@ -20,7 +21,11 @@ class UserPage extends Component {
     } = this.props;
     Axios({
       method: "GET",
-      url: `${params.userId ? `http://localhost:9000/social/users/${params.userId}` : `http://localhost:9000/social/users/me`}`,
+      url: `${
+        params.userId
+          ? `http://localhost:9000/social/users/${params.userId}`
+          : `http://localhost:9000/social/users/me`
+      }`,
       withCredentials: true,
     }).then((res) => {
       console.log(res.data.data);
@@ -32,9 +37,24 @@ class UserPage extends Component {
   }
 
   render() {
+    let cookies = this.props.cookies;
+    let userloggedIn = cookies.get("userLogin");
     const {
       match: { params },
     } = this.props;
+
+    let updateInfo =  <button className={classes.UpdateInfo}>Update Info</button>;
+    if(!userloggedIn) {
+      updateInfo = null
+    } else {
+      if(this.state.user) {
+        if(this.state.user._id === userloggedIn._id) {
+          updateInfo = null
+        } 
+      }
+      updateInfo = <a className={classes.UpdateInfo} href='/updateMe'>Update Info</a>
+    }
+
     return (
       <Aux>
         {this.state.loading ? (
@@ -48,18 +68,28 @@ class UserPage extends Component {
                   {this.state.user ? this.state.user.name : null}
                 </p>
               </div>
-              <div className={classes.Divider} ></div>
+              <div className={classes.Divider}></div>
               <div className={classes.UserInfo}>
-              <p className={classes.Username}>
-                {this.state.user ? "u/" + this.state.user.username : null}
-              </p>
-              
-        <span className={classes.Info}>Joined {this.state.user ? (new Date(this.state.user.createdAt)).toDateString() : null}<br></br></span>
-                <span className={classes.Info}> {this.state.user ? this.state.user.posts.length : null} Posts<br></br></span> 
+                <p className={classes.Username}>
+                  {this.state.user ? "u/" + this.state.user.username : null}
+                </p>
+
+                <span className={classes.Info}>
+                  Joined{" "}
+                  {this.state.user
+                    ? new Date(this.state.user.createdAt).toDateString()
+                    : null}
+                  <br></br>
+                </span>
+                <span className={classes.Info}>
+                  {" "}
+                  {this.state.user ? this.state.user.posts.length : null} Posts
+                  <br></br>
+                </span>
+                {updateInfo}
               </div>
             </div>
-            <Posts user={this.state.user? this.state.user._id: null}/>
-            {this.props.errmsg}
+            <Posts user={this.state.user ? this.state.user._id : null} />
           </div>
         )}
       </Aux>
@@ -67,4 +97,4 @@ class UserPage extends Component {
   }
 }
 
-export default withRouter(UserPage);
+export default withRouter(withCookies(UserPage));

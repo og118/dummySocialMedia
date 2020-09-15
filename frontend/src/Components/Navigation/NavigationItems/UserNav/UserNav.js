@@ -1,6 +1,6 @@
 import React from "react";
 import classes from "./UserNav.module.css";
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 
 
 const userNav = (props) => {
@@ -27,11 +27,15 @@ const userNav = (props) => {
         "none";
     }
   };
+
+
+  // attachedClasses = attachedClasses.join(' ')
+  
   return (
     <div>
-      <NavLink className={classes.UserNav} onClick={toggleDropdown}>
+      <div className={classes.UserNav} style={props.active ? {backgroundColor: "white", color: "black"} : {backgroundColor: "black", color: "white"}} onClick={toggleDropdown}>
         {props.children}
-      </NavLink>
+      </div>
       <div
         className={classes.dropdownContent + " dropdownContent"}
         id="dropdown"

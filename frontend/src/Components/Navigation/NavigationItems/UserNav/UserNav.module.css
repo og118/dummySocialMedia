@@ -9,8 +9,11 @@
     padding: 20px;
     margin-top: -20px;
     border-radius: 5px;
-    margin-left: -19px;
+    margin-left: -15px;
+    margin-right: 5px;
   }
+
+
 
   .dropdownContent {
     display: none;
@@ -72,6 +75,8 @@
     margin-top: 1px;
     width: 100%;
   }
+
+
 
   /*   
   .UserNav:first-child{

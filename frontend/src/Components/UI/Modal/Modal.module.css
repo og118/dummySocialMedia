@@ -20,7 +20,7 @@
 box-shadow: 2px 4px 5px 0px rgba(0,0,0,0.35)
 }
 
-.Error {
+.Msg {
     width: 70%;   
      text-align: center;
     position: fixed;

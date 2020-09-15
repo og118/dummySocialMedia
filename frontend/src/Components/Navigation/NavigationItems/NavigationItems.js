@@ -3,23 +3,31 @@ import classes from './NavigationItems.module.css'
 import NavigationItem from './NavigationItem/NavigationItem'
 import { withCookies } from 'react-cookie';
 import UserNav from './UserNav/UserNav'
+import Dropdown from 'react-bootstrap/Dropdown'
 import Axios from 'axios';
+import { withRouter } from 'react-router-dom';
 
 
 class NavigationItems extends Component {
-    logoutHandler = () => {
-        let cookies = this.props.cookies
-        cookies.remove('userLogin')
-        console.log(cookies)
-        
-    }
+
 
     render() {
         let userLoggedin = this.props.cookies.get('userLogin')
         // console.log(userLoggedin)
         let user = <NavigationItem link='/authenticate' >Login</NavigationItem>
         if(userLoggedin) {
-            user = <UserNav logout={this.logoutHandler}>{userLoggedin.username}  <i className="fas fa-angle-down"></i></UserNav>
+            user = <UserNav active={this.props.location.pathname==="/me"} logout={this.props.logout}>{userLoggedin.username}  <i className="fas fa-angle-down"></i></UserNav>
+        //     user = <Dropdown>
+        //     <Dropdown.Toggle className={classes.DropdownToggle}>
+        //       {userLoggedin.username}
+        //     </Dropdown.Toggle>
+          
+        //     <Dropdown.Menu>
+        //       <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+        //       <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+        //       <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+        //     </Dropdown.Menu>
+        //   </Dropdown>
         }
                                     
         return(
@@ -33,4 +41,4 @@ class NavigationItems extends Component {
 
 };
 
-export default withCookies(NavigationItems)
+export default withCookies(withRouter(NavigationItems))

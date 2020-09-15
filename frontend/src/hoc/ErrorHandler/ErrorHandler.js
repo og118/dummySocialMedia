@@ -49,15 +49,16 @@ const errorHandler = (WrappedComponent) => {
                 }
             }
             if(this.state.hasError) {
-                modal = <Modal show clicked={this.closeErrorHandler} type="errorModal"><i class='fas fa-ban' style={{color: "red"}}></i> 
+                modal = <Modal show clicked={this.closeErrorHandler} type="msgModal"><i class='fas fa-ban' style={{color: "red"}}></i> 
 
                 {" "+err.message}
                 <br></br>
                 </Modal>
             }
             return (
-                <Aux>
-                    {this.props.history.location.pathname==="/" ||this.props.history.location.pathname==="/user/:id" ? modal: null} 
+                <Aux>       
+                    {this.props.location.pathname === "/" || this.props.location.pathname.startsWith('/user/')? modal: null} 
+    
                     <WrappedComponent {...this.props} errormsg={err} />
                 </Aux>
             );        

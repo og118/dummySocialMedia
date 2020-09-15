@@ -23,6 +23,8 @@ router.delete('/deleteMe', authController.protect, postController.hideUserPosts,
 
 router.patch('/updatePassword',authController.protect, authController.updatePassword);
 
+router.get('/logout', authController.logout)
+
 router
     .route('/:id')
     .get(userController.getUser)

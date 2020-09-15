@@ -5,8 +5,8 @@ import Aux from "./../../../hoc/Auxilliary/Auxilliary";
 
 const modal = (props) => {
    let modalClass = [];
-   if(props.type === "errorModal") {
-     modalClass.push(classes.Error)
+   if(props.type === "msgModal") {
+     modalClass.push(classes.Msg)
    } else if(props.type === "userCard") {
      modalClass.push(classes.UserCard)
    }
