@@ -63,7 +63,7 @@ class UserPage extends Component {
           <div>
             <div className={classes.UserPanel}>
               <div className={classes.userNameImg}>
-                <img src={userImg} className={classes.img} width="180px"></img>
+                <img src={userImg} className={classes.img} width="180px" alt='user'></img>
                 <p className={classes.Name}>
                   {this.state.user ? this.state.user.name : null}
                 </p>

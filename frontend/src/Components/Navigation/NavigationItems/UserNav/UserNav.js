@@ -1,6 +1,5 @@
 import React from "react";
 import classes from "./UserNav.module.css";
-import { NavLink, withRouter } from 'react-router-dom';
 
 
 const userNav = (props) => {

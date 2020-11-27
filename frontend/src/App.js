@@ -23,7 +23,7 @@ class App extends Component {
           render={() => (
             <Posts
               cookies={this.props.cookies}
-              errormsg={this.props.errormsg}
+
             />
           )}
         />

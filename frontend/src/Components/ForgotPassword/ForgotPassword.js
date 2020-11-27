@@ -37,11 +37,11 @@ class forgotPassword extends Component {
           status: "Password Updated Successfully",
           resetPassword: true,
         });
-        let cookies = this.props.cookies;
-        cookies.set("userLogin", res.data.data);
-        setTimeout(() => {
-          this.props.history.push("/");
-        }, 1000);
+        setTimeout(() => 
+
+          this.props.login
+
+        , 1000);
       } else {
         this.setState({
           status: this.props.errormsg.message,

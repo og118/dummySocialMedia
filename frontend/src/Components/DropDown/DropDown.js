@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import DropDownButton from "./DropDownButton.js/DropDownButton";
-import Aux from "./../../hoc/Auxilliary/Auxilliary";
 import classes from "./DropDown.module.css";
 
 class DropDown extends Component {

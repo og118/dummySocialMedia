@@ -3,8 +3,6 @@ import classes from './NavigationItems.module.css'
 import NavigationItem from './NavigationItem/NavigationItem'
 import { withCookies } from 'react-cookie';
 import UserNav from './UserNav/UserNav'
-import Dropdown from 'react-bootstrap/Dropdown'
-import Axios from 'axios';
 import { withRouter } from 'react-router-dom';
 
 
