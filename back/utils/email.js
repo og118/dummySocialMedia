@@ -15,7 +15,7 @@ const sendEmail = async options => {
         service: 'gmail',
         auth: {
           user: 'mysocialspace1@gmail.com',
-          pass: 'mySocial123' // naturally, replace both with your real credentials or an application-specific password
+          pass: 'webApplication1' // naturally, replace both with your real credentials or an application-specific password
         },
         tls: {
             rejectUnauthorized: false

@@ -31,12 +31,14 @@ class Posts extends Component {
       withCredentials: true,
     })
       .then((res) => {
+        console.log('succ')
         this.setState({ posts: res.data.data, loading: false });
       })
       .catch((err) => {
         console.log(err);
       });
   }
+
 
   // to get user when clicked
   userShowHandler = (id) => {
@@ -145,6 +147,8 @@ class Posts extends Component {
       });
     }
 
+    
+
     return (
       <div>
         {this.state.posts ? (
@@ -159,7 +163,6 @@ class Posts extends Component {
             <p style={{textAlign:"center"}}>No posts yet :(</p>
           )
         ) : null}
-        {console.log('ah shit')}
         {posts}
         {this.state.showUser ? (
           <UserCard
@@ -167,6 +170,7 @@ class Posts extends Component {
             user={this.state.user}
           />
         ) : null}
+      
       </div>
     );
   }

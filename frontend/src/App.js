@@ -14,8 +14,19 @@ import UpdateMe from "./Components/UserPage/UpdateMe/UpdateMe";
 class App extends Component {
   render() {
     return (
+      
       <Layout cookies={this.props.cookies}>
-        <Route path="/" exact render={() => (<Posts />)} />
+        
+        <Route
+          path="/home"
+          exact
+          render={() => (
+            <Posts
+              cookies={this.props.cookies}
+              errormsg={this.props.errormsg}
+            />
+          )}
+        />
         <Route
           path="/authenticate"
           render={() => (
