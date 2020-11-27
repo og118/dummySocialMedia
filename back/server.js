@@ -19,7 +19,11 @@ mongoose.connect(DB, {
     useUnifiedTopology: true //imp to fix deprecation warning
 }).then(console.log('DB connection successful'));
 
-const server = app.listen(9000, () =>{
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static('./../frontend/build'))
+}
+
+const server = app.listen(process.env.PORT || 9000, () =>{
     console.log('App running on port 9000');
 }); 
 
