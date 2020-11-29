@@ -7,6 +7,7 @@ process.on('uncaughtException', err => {
 const app = require('./app');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv')
+const path = require('path')
 
 dotenv.config({path: './config.env'})
 
@@ -21,9 +22,14 @@ mongoose.connect(DB, {
 
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static('./../frontend/build'))
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+    })
 }
 
-const server = app.listen(process.env.PORT || 9000, () =>{
+const PORT = process.env.PORT;
+
+const server = app.listen(PORT || 9000, () =>{
     console.log('App running on port 9000');
 }); 
 
